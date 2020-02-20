@@ -1,17 +1,15 @@
-import JobsTable        from './components/JobsTable';
-import EditJob          from './components/modals/EditJob.vue';
-import SendCandidate    from './components/modals/SendCandidate';
-import AddPlacement     from './components/modals/AddPlacement';
-import ClientsTable     from './components/ClientsTable';
+import JobsTable        from './components/JobsTable'
+import EditJob          from './components/modals/EditJob.vue'
+import SendCandidate    from './components/modals/SendCandidate'
+import AddPlacement     from './components/modals/AddPlacement'
+import ClientsTable     from './components/ClientsTable'
 import EditClient       from './components/modals/EditClient.vue'
-import TermsOfBusiness  from './components/TermsOfBusiness.vue';
-import CandidatesTable  from './components/CandidatesTable.vue';
-import GenerateReport   from './components/modals/GenerateReport.vue';
-import EditCandidate    from './components/modals/EditCandidate.vue';
+import TermsOfBusiness  from './components/TermsOfBusiness.vue'
+import CandidatesTable  from './components/CandidatesTable.vue'
+import GenerateReport   from './components/modals/GenerateReport.vue'
+import EditCandidate    from './components/modals/EditCandidate.vue'
 import AddCv            from './components/modals/AddCv.vue'
-import RecruitersTable  from './components/RecruitersTable.vue';
-import EditRecruiter    from './components/modals/EditRecruiter.vue'
-import UsersTable       from './components/UsersTable.vue';
+import UsersTable       from './components/UsersTable.vue'
 import AddUser          from './components/modals/AddUser.vue'
 import TransferAssets   from './components/modals/TransferAssets.vue'
 import ChangeUserPassword from './components/modals/ChangeUserPassword.vue'
@@ -66,9 +64,6 @@ let router = new Router({
     {path: '/candidates/upload-cv', component: AddCv,           name: 'upload-cv',          meta: {requiresAuth: true, access: ['normal', 'elevated']}},
     {path: '/candidates/generate-report', component: GenerateReport, name: 'generate-report', meta: {requiresAuth: true, access: ['normal', 'elevated']}},
     {path: '/terms-of-business',    component: TermsOfBusiness, name: 'terms-of-business',  meta: {requiresAuth: true, access: ['normal', 'elevated']}},
-    //{path: '/recruiters',           component: RecruitersTable, name: 'recruiters',     meta: {requiresAuth: true, access: ['elevated']}},
-    //{path: '/recruiters/add',       component: EditRecruiter,   name: 'add-recruiter',  meta: {requiresAuth: true, access: ['elevated']}},
-    //{path: '/recruiters/edit',      component: EditRecruiter,   name: 'edit-recruiter', meta: {requiresAuth: true, access: ['elevated']}},
     {path: '/users',                component: UsersTable,      name: 'users',          meta: {requiresAuth: true, access: ['elevated']}},
     {path: '/users/add',            component: AddUser,         name: 'add-user',       meta: {requiresAuth: true, access: ['elevated']}},
     {path: '/users/edit',           component: AddUser,         name: 'edit-user',       meta: {requiresAuth: true, access: ['elevated']}},
@@ -94,12 +89,10 @@ export default router;
 router.beforeEach(async (to, from, next) => {
   if (to.matched.some(record => record.meta.requiresAuth )){
     if (!store.getters.isAuthenticated){
-      mgr
-      .signinSilent()
+      mgr.signinSilent()
       .then((user) => {
         if (user == null){
-          mgr
-          .signinRedirect(to.path)
+          mgr.signinRedirect(to.path)
           .then(() => {
             store.commit("authenticationSuccessful");
             store.commit("loadUser", user);
@@ -138,10 +131,8 @@ router.beforeEach(async (to, from, next) => {
             store.commit("loadUser", user);
             if (store.getters.isAuthenticated){
               if (to.meta.access.some((accessItem) => accessItem == store.getters.user.profile.access)){
-
                 next();
               }else{
-
                 next('/');
               }                                  
             }else{
@@ -149,7 +140,6 @@ router.beforeEach(async (to, from, next) => {
             }
           }
           else{
-
           }
         });
       });

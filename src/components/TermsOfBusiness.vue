@@ -10,23 +10,12 @@
  
 
   <div class="midbody" v-if="isLoading" >
-    <b-spinner variant="info" label="Spinning"></b-spinner>
+    <b-spinner class="loading" label="Spinning"></b-spinner>
     <span class="loading h2"> &nbsp; Loading...     </span>
   </div>
 
   <div v-else>
     <div class="container">
-    <!-- <b-row class="my-3">
-      <b-col sm="3">
-        <label>Generate TOB:</label>
-      </b-col>    
-      <b-col sm="9" lg="6">
-        <b-form-select v-model="selectedTob" :options="tobOptions" :state="(selectedTob != null)"></b-form-select>
-        <b-form-invalid-feedback id="input-live-feedback">
-          Select TOB type!
-        </b-form-invalid-feedback>
-      </b-col>
-    </b-row> -->
     <b-row class="my-3">
       <b-col sm="3">
         <label>Company Name:</label>
@@ -82,17 +71,6 @@
         <b-form-checkbox v-model="remFixedAllowanceCheckbox">Fixed allowance</b-form-checkbox>
       </b-col>
     </b-row>
-    <!-- <b-row class="my-3">
-      <b-col sm="3">
-        <label>Recruiter:</label>
-      </b-col>
-      <b-col sm="9" lg="6" :class="{ 'invalid': clientIsInvalid }" >
-        <div  :class="{ 'invalid': clientIsInvalid }">
-        <multiselect  track-by="recruiterId" label="name" v-model="chosenRecruiter" :options="recruiters"></multiselect>
-        
-        </div>
-      </b-col>
-    </b-row>  -->
     <b-row class="my-3">
       <b-col sm="3">
         <label>Type of bonuses:</label>
@@ -169,24 +147,6 @@
     </div>
     <br/>
     <br/>
-    <!-- <div>
-      The options below don't have any effect on the generated PDF document. They can be implemented later if so desired.
-    </div>
-    <hr/>     -->
-    
-     
-   
-    
-    <!-- <b-row class="my-1"><label></label> </b-row>
-    <b-row class="my-1">    
-      <b-col sm="9">
-        <div class="alert alert-info" role="alert">
-            (if a vacancy arises during the guarantee period
-            and a replacement (in the same position) is not required)
-        </div>
-      </b-col>
-    </b-row>  -->
-    
 
     <br>
     
@@ -208,7 +168,6 @@ import {addMyCustomFonts} from '../Prompt-Regular-normal.js'
 
 export default {
   name: 'terms',
- /*  mode: 'production', */
   components: {
     BButton,
     BContainer,
@@ -220,7 +179,6 @@ export default {
   },
   data() {
     return {
-      // isLoading: false,
       clientId: 0,
       chosenRecruiter: null,
       clientsAreLoading: false,
@@ -311,8 +269,50 @@ export default {
         {
           id: 1,
           salaryRange: {
-            from: 100000,
+            from: 40000,
             relationship: 'And Below',
+            to: 0,
+          },
+          chargeRate: {
+            percentage: 10,
+            onBaseOf: 'Annual Package',
+          },
+          warranty: 3, 
+          remove: false,
+        },
+        {
+          id: 2,
+          salaryRange: {
+            from: 40001,
+            relationship: 'To',
+            to: 80000,
+          },
+          chargeRate: {
+            percentage: 12,
+            onBaseOf: 'Annual Package',
+          },
+          warranty: 3, 
+          remove: false,
+        },
+        {
+          id: 3,
+          salaryRange: {
+            from: 80001,
+            relationship: 'To',
+            to: 120000,
+          },
+          chargeRate: {
+            percentage: 15,
+            onBaseOf: 'Annual Package',
+          },
+          warranty: 3, 
+          remove: false,
+        },
+        {
+          id: 4,
+          salaryRange: {
+            from: 120001,
+            relationship: 'And Above',
             to: 0,
           },
           chargeRate: {
@@ -322,262 +322,179 @@ export default {
           warranty: 3, 
           remove: false,
         },
-        {
-          id: 2,
-          salaryRange: {
-            from: 100001,
-            relationship: 'To',
-            to: 200000,
-          },
-          chargeRate: {
-            percentage: 22,
-            onBaseOf: 'Annual Package',
-          },
-          warranty: 3, 
-          remove: false,
-        },
-        {
-          id: 3,
-          salaryRange: {
-            from: 200001,
-            relationship: 'And Above',
-            to: 0,
-          },
-          chargeRate: {
-            percentage: 25,
-            onBaseOf: 'Annual Package',
-          },
-          warranty: 3, 
-          remove: false,
-        },
       ],
     }
   },
   created(){
-    //this.clientsAreLoading = true
-    //this.recruitersAreLoading = true
     if (this.$route.query.clientId){
-      this.clientId = this.$route.query.clientId      
-    }
-    
+      this.clientId = this.$route.query.clientId;     
+    }    
     if (this.$route.query.contactPerson){
-      this.contactPerson = this.$route.query.contactPerson      
+      this.contactPerson = this.$route.query.contactPerson;    
     }
     if (this.$route.query.companyName){
-      this.companyName = this.$route.query.companyName      
+      this.companyName = this.$route.query.companyName;      
     }
     if (this.$route.query.address){
-      this.address = this.$route.query.address      
+      this.address = this.$route.query.address;     
     }
-    //  axios.get('api/clients')
-    // .then(res => {
-    //   this.clients = res.data
-    //   var x;
-    //   for (x in this.clients) {       
-    //       this.clients[x].companyNcontact = this.clients[x].companyName + " (" + this.clients[x].contactPerson + ")"  
-    //       if (this.clients[x].clientId === this.clientId){
-    //         this.chosenClient = this.clients[x]
-    //       }          
-    //   }
-    // })
-    // .catch(err => console.log(err))
-    // .finally(() => this.clientsAreLoading = false)
-
-
-    // axios.get('api/recruiters')
-    // .then(res => {
-    //     this.recruiters = res.data
-    //     //this.chosenRecruiter = this.recruiters[0]
-    //     })
-    // .catch(err => console.log(err))
-    // .finally(() => this.recruitersAreLoading = false)
   },
   computed: {
     isLoading(){
-      return this.clientsAreLoading || this.recruitersAreLoading
+      return this.clientsAreLoading || this.recruitersAreLoading;
     },
     canGenerate(){
-      //return true;
-      return this.date && this.selectedFeeTypeOption !== 0 //&& this.chosenClient && this.chosenRecruiter
+      return this.date && this.selectedFeeTypeOption !== 0;
     },
-    // feeTypeOptions(){
-    //   let options = [
-    //     {value: 0, text: "Tier Fee"},
-    //     {value: 1, text: "Flat Fee"},
-    //   ]
-    //   // let increment = 1;
-    //   // this.items.forEach(function(item) {
-    //   //   if (!item.remove){
-    //   //     options.push({value: increment, text: increment.toString()})
-    //   //   }
-    //   //   increment++;
-    //   // })
-    //   return options;
-    // },
     validTierFee(){
       return this.selectedFeeTypeOption == 0 ? false : true;
     },
     clientIsInvalid(){
-      return this.chosenClient ? true : false
+      return this.chosenClient ? true : false;
     },
     chargeRatePercentage(){
-      return (this.selectedFeeTypeOption === 0 ? '' : this.items[this.selectedFeeTypeOption - 1].chargeRate.percentage)
+      return (this.selectedFeeTypeOption === 0 ? '' : this.items[this.selectedFeeTypeOption - 1].chargeRate.percentage);
     },
     chargeRateOnBaseOf(){
-      return (this.selectedFeeTypeOption === 0 ? '' : (this.items[this.selectedFeeTypeOption - 1].chargeRate.onBaseOf === "Annual Package" ? "ANNUAL REMUNERATION PACKAGE" : ''))
+      return (this.selectedFeeTypeOption === 0 ? '' : (this.items[this.selectedFeeTypeOption - 1].chargeRate.onBaseOf === "Annual Package" ? "ANNUAL REMUNERATION PACKAGE" : ''));
     },
     validChosenRecruiter(){
-      return this.chosenRecruiter == null
-    },
-    
+      return this.chosenRecruiter == null;
+    },    
   },
   methods: { 
-    // formatBonuses() {
-    //   if (this.selectedBonusType === "fixed") {
-    //     return "fixed bonuses"
-    //   }else if (this.selectedBonusType === "variable") {
-    //     return "variable bonuses"
-    //   }else {
-    //     return "bonuses"
-    //   }
-    // },
     formatRemunerationPackage() {
       let returnString = "";
       if (this.remMonthlySalaryCheckbox === true &&
           this.remBonusCheckbox === true &&
           this.remFixedAllowanceCheckbox === true) { 
-            returnString = "monthly basic salary, bonuses and other fixed allowances"
+            returnString = "monthly basic salary, bonuses and other fixed allowances";
       }else if (this.remMonthlySalaryCheckbox === true &&
           this.remBonusCheckbox === true) {
-            returnString = "monthly basic salary and bonuses"
+            returnString = "monthly basic salary and bonuses";
       }else if (this.remMonthlySalaryCheckbox === true &&
           this.remFixedAllowanceCheckbox === true) {
-            returnString = "monthly basic salary and other fixed allowances"
+            returnString = "monthly basic salary and other fixed allowances";
       }else if (this.remBonusCheckbox === true &&
           this.remFixedAllowanceCheckbox === true) {
-            returnString = " bonuses and other fixed allowances"
+            returnString = " bonuses and other fixed allowances";
       }else if (this.remMonthlySalaryCheckbox === true) {
-            returnString = "monthly basic salary"
+            returnString = "monthly basic salary";
       }else if (
           this.remBonusCheckbox === true) {
-            returnString = "bonuses"
+            returnString = "bonuses";
       }else if (
           this.remFixedAllowanceCheckbox === true) {
-            returnString = "fixed allowances"
+            returnString = "fixed allowances";
       }else {
         returnString = "";
       }
       return returnString;
     },
     cancel() {
-      this.$router.go(-1)
+      this.$router.go(-1);
     },
     formatDate(){
       if (this.date == null)
       {
-        return ' '
+        return ' ';
       }else{
         var res = this.date.split("-");
-        let day = res[2]
-        let month = res[1]
-        let year = res[0]
-        let dateString = ''
+        let day = res[2];
+        let month = res[1];
+        let year = res[0];
+        let dateString = '';
         if (day === '01') {
-          dateString += '1st '
+          dateString += '1st ';
         }else if (day === '02') {
-          dateString += '2nd '
+          dateString += '2nd ';
         }else if (day === '03') {
-          dateString += '3rd '
+          dateString += '3rd ';
         }else if (day === '04') {
-          dateString += '4th '
+          dateString += '4th ';
         }else if (day === '05') {
-          dateString += '5th '
+          dateString += '5th ';
         }else if (day === '06') {
-          dateString += '6th '
+          dateString += '6th ';
         }else if (day === '07') {
-          dateString += '7th '
+          dateString += '7th ';
         }else if (day === '08') {
-          dateString += '8th '
+          dateString += '8th ';
         }else if (day === '09') {
-          dateString += '9th '
+          dateString += '9th ';
         }else {
-          dateString += day + 'th '
+          dateString += day + 'th ';
         }      
         
         if (month === '01') {
-          dateString += 'January '
+          dateString += 'January ';
         }else if (month === '02') {
-          dateString += 'February '
+          dateString += 'February ';
         }else if (month === '03') {
-          dateString += 'March '
+          dateString += 'March ';
         }else if (month === '04') {
-          dateString += 'April '
+          dateString += 'April ';
         }else if (month === '05') {
-          dateString += 'May '
+          dateString += 'May ';
         }else if (month === '06') {
-          dateString += 'June '
+          dateString += 'June ';
         }else if (month === '07') {
-          dateString += 'July '
+          dateString += 'July ';
         }else if (month === '08') {
-          dateString += 'August '
+          dateString += 'August ';
         }else if (month === '09') {
-          dateString += 'September '
+          dateString += 'September ';
         }else if (month === '10') {
-          dateString += 'October '
+          dateString += 'October ';
         }else if (month === '11') {
-          dateString += 'November '
+          dateString += 'November ';
         }else if (month === '12') {
-          dateString += 'December '
+          dateString += 'December ';
         }else {
-          dateString += ''
+          dateString += '';
         }
-        dateString += year
-        return dateString
-        //return res[2] + '.' + res[1] + '.' + res[0]
+        dateString += year;
+        return dateString;
       }       
     },  
     salaryRangeSecondFieldIsActive(item) {
-      return (item.salaryRange.relationship === 'And Below' || item.salaryRange.relationship === 'And Above') ? false : true
+      return (item.salaryRange.relationship === 'And Below' || item.salaryRange.relationship === 'And Above') ? false : true;
     },
     setTobType(){
       if (this.selectedTob){
         if (this.selectedTob === 'Perm') {
-          return 'Permanent Staff Placement'
-        } else if (this.selectedTob === 'Temp') {
-          return 'Temporary Staff Placement'
-        } else if (this.selectedTob === 'Contract') {
-          return 'Contract Based Staff Placement'
+          return 'Permanent Staff Placement';
+        }else if (this.selectedTob === 'Temp') {
+          return 'Temporary Staff Placement';
+        }else if (this.selectedTob === 'Contract') {
+          return 'Contract Based Staff Placement';
         }
       }else{
         return '';
-      }
-      
+      }      
     },
     setHeader(doc) {
       let img = document.getElementById("hiddenImage");
-      doc.addImage(img, 'PNG', 20, 15, 18, 18)
-      doc.setTextColor('#009cad');
+      doc.addImage(img, 'PNG', 20, 15, 18, 18);
+      doc.setTextColor('#9CC925');
       doc.setFontSize(9);
-      doc.setFontStyle('normal')
+      doc.setFontStyle('normal');
       
-      doc.text("Leap International Recruitment Co.,Ltd.", 37, 24);
+      doc.text("Company 1,Ltd.", 37, 24);
       doc.setFont("Prompt-Regular",'normal');
        doc.setFontSize(7);
-      doc.text("บริษัทจัดหางาน ลีพ อินเตอร์เนชั่นแนล จำกัด", 37, 28);
+     
       doc.setFont('times');
       doc.setTextColor(0);
       doc.setFontSize(9);
       doc.setFontStyle('normal');
-      let headerY = 15
+      let headerY = 15;
       
-      let lineHeight = 3.9
-      doc.text("Leap International Recruitment Co., Ltd", 190, headerY, {align: "right"});
+      let lineHeight = 3.9;
+      doc.text("Company 1., Ltd", 190, headerY, {align: "right"});
       
-      doc.text("1 Sukhumvit Alley 25,", 190, headerY + lineHeight, {align: "right"});
-      doc.text("Sukhumvit Road,", 190, headerY + 2 * lineHeight, {align: "right"});
-      doc.text("Level P Unit P01, Glas Haus,", 190, headerY + 3 * lineHeight, {align: "right"} );      
-      doc.text("North Klongtoey, Wattana,", 190, headerY + 4 * lineHeight, {align: "right"} );
-      doc.text("Thailand, Bangkok 10110", 190, headerY + 5 * lineHeight, {align: "right"});    
+      doc.text("8 Rue des Bonnes Gens,", 190, headerY + lineHeight, {align: "right"});
+      doc.text("France, 67000 Strassbourg,", 190, headerY + 2 * lineHeight, {align: "right"});          
     },
     downloadPDF() {
      
@@ -588,12 +505,12 @@ export default {
 
      
       doc.setPage(1);
-      doc.setLineHeightFactor(1.22)
+      doc.setLineHeightFactor(1.22);
       doc.setFontSize(12);
-      doc.setFont("times")
-      let yPos = 60
-      let lineHeight = 3.9
-      this.setHeader(doc)
+      doc.setFont("times");
+      let yPos = 60;
+      let lineHeight = 3.9;
+      this.setHeader(doc);
 
       
       doc.setFontSize(12);
@@ -601,30 +518,26 @@ export default {
       doc.text("TERMS OF BUSINESS - PERMANENT STAFF PLACEMENT",105,50,{align: "center"});
       doc.setFontSize(9);
       doc.setFontStyle('normal');
-      //doc.setLineWidth(60)
-      let firstParagraph = "<div style=\"font-size:9pt\">This Agreement dated " + this.formatDate() + ", is made between <b>Leap International Recruitment Co., Ltd</b> " 
-      + "(\"Leap International Recruitment\"), Company registration number 0105562120053, having its address at 1 Sukhumvit Soi 25, Sukhumvit Road, Level " 
-      + "P Unit P01, Glas Haus, North Klongtoey, Wattana, Thailand, Bangkok, 10110 and <b>" + this.companyName + "</b> (\"the " 
-      + "Client\"), having its address in " + this.address + ".</div>"
+      let firstParagraph = "<div style=\"font-size:9pt\">This Agreement dated <span style=\"color: red\">" + this.formatDate() + "</span>, is made between <b>Company 1, Ltd</b> " 
+      + "(\"Company 1\"), Company registration number 05512235, having its address at 8 Rue des Bonnes Gens,  " 
+      + "67000 Strassbourg, France and <span style=\"color: red\"><b>" + this.companyName + "</span></b> (\"the " 
+      + "Client\"), having its address in <span style=\"color: red\">" + this.address + "</span>.</div>";
 
-      doc.fromHTML(firstParagraph,20,yPos - 7,{width: 170})
+      doc.fromHTML(firstParagraph,20,yPos - 7,{width: 170});
       
-      //doc.text("InternationalRecruitment",20,73.9,lineOptions)
+      yPos = this.getNextYPos(yPos, firstParagraph, doc);
+      let text = "The Terms and Conditions of our services for Permanent Employee Placements are as follows:";
+      doc.text(text,20,yPos,lineOptions);
 
-      //yPos += blockHeight 
-      yPos = this.getNextYPos(yPos, firstParagraph, doc)
-      let text = "The Terms and Conditions of our services for Permanent Employee Placements are as follows:"
-      doc.text(text,20,yPos,lineOptions)
-
-      yPos += lineHeight
+      yPos += lineHeight;
       
       doc.setFontStyle('bold');
-      yPos = this.getNextYPos(yPos, text, doc)    
-      text = "1. PLACEMENT FEE"
-      doc.text(text,20,yPos,lineOptions)
+      yPos = this.getNextYPos(yPos, text, doc)   ; 
+      text = "1. PLACEMENT FEE";
+      doc.text(text,20,yPos,lineOptions);
       doc.setFontStyle('normal');
 
-      yPos += lineHeight
+      yPos += lineHeight;
       
       var secondTable = [
         ["FEE CHARGED", "GUARANTEE PERIOD"],
@@ -632,8 +545,7 @@ export default {
       ];
      
       var tierFeeTable = [
-        ["Salary Range(THB)","FEE CHARGED", "GUARANTEE PERIOD"],
-        //["20% OF ANNUAL REMUNERATION PACKAGE", "3 MONTHS"],
+        ["Salary Range(EUR)","FEE CHARGED", "GUARANTEE PERIOD"],
       ];
       this.items.forEach(i => {
         if (i.remove === false) {
@@ -642,11 +554,10 @@ export default {
           }else if (i.salaryRange.relationship === "And Above") {
             tierFeeTable.push([i.salaryRange.from + " above", i.chargeRate.percentage + "%", i.warranty == 1 ? i.warranty + " Month" : i.warranty + " Months"]);
           }else if (i.salaryRange.relationship === "To") {
-             tierFeeTable.push([i.salaryRange.from + " to " + i.salaryRange.to, i.chargeRate.percentage + "%", i.warranty == 1 ? i.warranty + " Month" : i.warranty + " Months"])
+             tierFeeTable.push([i.salaryRange.from + " to " + i.salaryRange.to, i.chargeRate.percentage + "%", i.warranty == 1 ? i.warranty + " Month" : i.warranty + " Months"]);
           }else {
-             tierFeeTable.push(["invalid data", i.chargeRate.percentage + "%", i.warranty == 1 ? i.warranty + " Month" : i.warranty + " Months"])
-          }
-          
+             tierFeeTable.push(["invalid data", i.chargeRate.percentage + "%", i.warranty == 1 ? i.warranty + " Month" : i.warranty + " Months"]);
+          }          
         }
       })
 
@@ -683,229 +594,107 @@ export default {
           startY: yPos
         });
       }
-      yPos = doc.autoTable.previous.finalY
-      yPos = this.getNextYPos(yPos, text, doc)
-      text = "* From commencement of employment, regardless of if and when the letter of employment is signed."
-      doc.text(text,20,yPos,lineOptions)
+      yPos = doc.autoTable.previous.finalY;
+      yPos = this.getNextYPos(yPos, text, doc);
+      text = "* From commencement of employment, regardless of if and when the letter of employment is signed.";
+      doc.text(text,20,yPos,lineOptions);
 
-      yPos = this.getNextYPos(yPos, text, doc)
-      text = "* The fee include advertising, screening of candidates, candidates’ evaluation, placement and guarantee."
-      doc.text(text,20,yPos,lineOptions)
+      yPos = this.getNextYPos(yPos, text, doc);
+      text = "* The fee include advertising, screening of candidates, candidates’ evaluation, placement and guarantee.";
+      doc.text(text,20,yPos,lineOptions);
 
 
-      yPos = this.getNextYPos(yPos, text, doc)
-      text = "* The annual remuneration package will be inclusive of " + this.formatRemunerationPackage() + "."
-      doc.text(text,20,yPos,lineOptions)
+      yPos = this.getNextYPos(yPos, text, doc);
+      text = "* The annual remuneration package will be inclusive of " + this.formatRemunerationPackage() + ".";
+      doc.text(text,20,yPos,lineOptions);
 
-      yPos += lineHeight
+      yPos += lineHeight;
 
-      // yPos = this.getNextYPos(yPos, text, doc)
-      // text =  ["1.1. The following shall be contractual conditions that the client agrees to abide accordingly. It will be of the terms that LEAP" +
-      //         "INTERNATIONAL RECRUITMENT and its clients have agreed to enter into with regards to the employment of a staff introduced" +
-      //         "to the client by LEAP INTERNATIONAL RECRUITMENT." ,
-      //         "1.2. The recruitment of placement fee as specified in the confirmation of order shall apply. This is due and payable to LEAP" +
-      //         "INTERNATIONAL RECRUITMENT upon successful commencement of work by the selected candidates referred, irrespective of" +
-      //         "whether any letter of employment or letter of offer has been signed by the Employee." ,
-      //         "1.3. By expressly allowing for an interview to be conducted or by the commencement of employment of the permanent staff" +
-      //         "introduced by LEAP INTERNATIONAL RECRUITMENT, would constitute the client’s acceptance of all the terms and conditions" +
-      //         "set forth in this agreement" ]
-      // doc.text(text,20,yPos,lineOptions)
+      yPos = this.getNextYPos(yPos, text, doc);
+      text =  "1.1 The following shall be contractual conditions that the client agrees to abide accordingly. It will be of the terms that Company 1 " +
+              " and its clients have agreed to enter into with regards to the employment of a staff introduced " +
+              "to the client by Company 1.";
+      doc.text(text,20,yPos,lineOptions);
 
-      yPos = this.getNextYPos(yPos, text, doc)
-      text =  "1.1 The following shall be contractual conditions that the client agrees to abide accordingly. It will be of the terms that LEAP " +
-              "INTERNATIONAL RECRUITMENT and its clients have agreed to enter into with regards to the employment of a staff introduced " +
-              "to the client by LEAP INTERNATIONAL RECRUITMENT." 
-      doc.text(text,20,yPos,lineOptions)
+      yPos = this.getNextYPos(yPos, text, doc);
+      text =  "1.2 The recruitment of placement fee as specified in the confirmation of order shall apply. This is due and payable to Company 1 " +
+              "upon successful commencement of work by the selected candidates referred, irrespective of " +
+              "whether any letter of employment or letter of offer has been signed by the Employee."; 
+      doc.text(text,20,yPos,lineOptions);
 
-      yPos = this.getNextYPos(yPos, text, doc)
-      text =  "1.2 The recruitment of placement fee as specified in the confirmation of order shall apply. This is due and payable to LEAP " +
-              "INTERNATIONAL RECRUITMENT upon successful commencement of work by the selected candidates referred, irrespective of " +
-              "whether any letter of employment or letter of offer has been signed by the Employee." 
-      doc.text(text,20,yPos,lineOptions)
-
-      yPos = this.getNextYPos(yPos, text, doc)
+      yPos = this.getNextYPos(yPos, text, doc);
       text =  "1.3 By expressly allowing for an interview to be conducted or by the commencement of employment of the permanent staff " +
-              "introduced by LEAP INTERNATIONAL RECRUITMENT, would constitute the client’s acceptance of all the terms and conditions " +
-              "set forth in this agreement"
-      doc.text(text,20,yPos,lineOptions)
+              "introduced by Company 1, would constitute the client’s acceptance of all the terms and conditions " +
+              "set forth in this agreement";
+      doc.text(text,20,yPos,lineOptions);
 
-      yPos += lineHeight
+      yPos += lineHeight;
 
       doc.setFontStyle('bold');
-      yPos = this.getNextYPos(yPos, text, doc)
-      text =  "2. PAYMENT TERMS"              
-      doc.text(text,20,yPos,lineOptions)
+      yPos = this.getNextYPos(yPos, text, doc);
+      text =  "2. PAYMENT TERMS";              
+      doc.text(text,20,yPos,lineOptions);
       doc.setFontStyle('normal');      
 
-      yPos = this.getNextYPos(yPos, text, doc)
-      text =  "2.1 All invoices issued to client has to be settled fully within " + (this.selectedCreditTerm == null ? "thirty (30) days" : "forty-five (45) days") + " from the invoice date. "          
-      doc.text(text,20,yPos,lineOptions)
-      
-      yPos += lineHeight
+      yPos = this.getNextYPos(yPos, text, doc);
+      text =  "2.1 All invoices issued to client has to be settled fully within <span style=\"color: red\">" + (this.selectedCreditTerm == null ? "thirty (30) days" : "forty-five (45) days") + "</span> from the invoice date. ";          
+      doc.text(text,20,yPos,lineOptions);
+
+      yPos += lineHeight;
 
       doc.setFontStyle('bold');
-      yPos = this.getNextYPos(yPos, text, doc)
-      text =  "3. SERVICE GUARANTEE"          
-      doc.text(text,20,yPos,lineOptions)
+      yPos = this.getNextYPos(yPos, text, doc);
+      text =  "3. DEFERRED HIRING";     
+      doc.text(text,20,yPos,lineOptions);
       doc.setFontStyle('normal');
       
-      yPos = this.getNextYPos(yPos, text, doc)
-      text =  "3.1 LEAP INTERNATIONAL RECRUITMENT shall refer only those candidates who have been interviewed by our consultants."          
-      doc.text(text,20,yPos,lineOptions)
+      yPos = this.getNextYPos(yPos, text, doc);
+      text =  "3.1 If a recommended candidate from Company 1 is employed and/or commences work for the " +
+              "client within twelve (12) months from the referral date, the placement fee shall be payable in accordance with Clause 1 above.";           
+      doc.text(text,20,yPos,lineOptions);
 
-      yPos = this.getNextYPos(yPos, text, doc)
-      text =  "3.2 LEAP INTERNATIONAL RECRUITMENT shall forward resumes of candidates who have been thoroughly briefed and evaluated."          
-      doc.text(text,20,yPos,lineOptions)
-
-      yPos = this.getNextYPos(yPos, text, doc)
-      text =  "3.3 LEAP INTERNATIONAL RECRUITMENT shall ensure that reference checks are conducted where appropriate or at client’s " +
-              "request, prior to job offer to the candidate."          
-      doc.text(text,20,yPos,lineOptions)
-      
-      yPos = this.getNextYPos(yPos, text, doc)
-      text =  "3.4 LEAP INTERNATIONAL RECRUITMENT shall follow up after placements, 3 weeks after candidate commences, where " +
-              "possible, with a progress review by the assigned consultant on both Client and Candidate. For the avoidance of doubt, any alleged " +
-              "failure to do so shall not provide the Client with any cause of action for damages, expenses or otherwise, and shall not exonerate " +
-              "the Client from its payment obligations to LEAP INTERNATIONAL RECRUITMENT."          
-      doc.text(text,20,yPos,lineOptions)
-
-      yPos = this.getNextYPos(yPos, text, doc)
-      text =  "3.5 LEAP INTERNATIONAL RECRUITMENT shall not charge any service to the candidate."          
-      doc.text(text,20,yPos,lineOptions)
-
-      yPos += lineHeight
+      yPos += lineHeight;
 
       doc.setFontStyle('bold');
-      yPos = this.getNextYPos(yPos, text, doc)
-      text =  "4. DEFERRED HIRING"          
-      doc.text(text,20,yPos,lineOptions)
-      doc.setFontStyle('normal');
-      
-      yPos = this.getNextYPos(yPos, text, doc)
-      text =  "4.1 If a recommended candidate from LEAP INTERNATIONAL RECRUITMENT is employed and/or commences work for the " +
-              "client within twelve (12) months from the referral date, the placement fee shall be payable in accordance with Clause 1 above. For " +
-              "the avoidance of doubt, the placement fee shall also be payable if the client cancels or revokes a hiring decision after the candidate " +
-              "accepts the client's offer of employment (even if no formal employment contract is signed)."           
-      doc.text(text,20,yPos,lineOptions)
-
-      yPos += lineHeight
-
-      doc.setFontStyle('bold');
-      yPos = this.getNextYPos(yPos, text, doc)
-      text =  "5. LIABILITIES AND INDEMNITIES"          
-      doc.text(text,20,yPos,lineOptions)
+      yPos = this.getNextYPos(yPos, text, doc);
+      text =  "4. LIABILITIES AND INDEMNITIES";          
+      doc.text(text,20,yPos,lineOptions);
       doc.setFontStyle('normal');
 
-      yPos = this.getNextYPos(yPos, text, doc)
-      text =  "5.1 LEAP INTERNATIONAL RECRUITMENT shall not be liable for any acts, errors or omission, injury, delay or consequential " +
+      yPos = this.getNextYPos(yPos, text, doc);
+      text =  "4.1 Company 1 shall not be liable for any acts, errors or omission, injury, delay or consequential " +
               "loss arising directly or indirectly by the permanent staff introduced to the clients and do not have any liability for any loss or damage " +
-              "suffered by the client whatsoever."          
-      doc.text(text,20,yPos,lineOptions)
-
-      yPos += lineHeight
-
+              "suffered by the client whatsoever.";          
+      doc.text(text,20,yPos,lineOptions);   
       
-      yPos = this.getNextYPos(yPos, text, doc)
-      doc.setFontStyle('bold');
-      text =  "6. REPLACEMENT OBLIGATION"          
-      doc.text(text,20,yPos,lineOptions)
-      doc.setFontStyle('normal');
-
-      yPos = this.getNextYPos(yPos, text, doc)
-      text =  "6.1 Replacement of the permanent staff introduced by LEAP INTERNATIONAL RECRUITMENT to the client will only be " +
-              "affected if the permanent staff ceases employment within the guarantee period (as defined in Clause 1 above). For the avoidance " +
-              "of doubt, LEAP INTERNATIONAL RECRUITMENT shall not be bound to make any refund or give any credit in the event of " +
-              "any cessation or termination of employment of the candidate."          
-      doc.text(text,20,yPos,lineOptions)
-
-      yPos = this.getNextYPos(yPos, text, doc)
-      text =  "6.2 Client shall put down in writing and has it communicated to LEAP INTERNATIONAL RECRUITMENT in order to have this " +
-              "replacement obligation to be invoked. Written notice must be given by the Client to LEAP INTERNATIONAL RECRUITMENT " +
-              "no later than thirty (30) days from the cessation or termination of employment. LEAP INTERNATIONAL RECRUITMENT shall " +
-              "not be bound to procure a replacement if the foregoing condition precedent is not fulfilled by the client. The replacement must be " +
-              "engaged after the said period. The client shall be liable to pay an additional placement fee in accordance with Clause 1 above."          
-      doc.text(text,20,yPos,lineOptions)
-
-      yPos += lineHeight
+      yPos += lineHeight;
 
       doc.setFontStyle('bold');
-      yPos = this.getNextYPos(yPos, text, doc)
-      text =  "7. USE OF PERSONAL DATA/INFORMATION AND THIRD-PARTY REFERRAL"          
-      doc.text(text,20,yPos,lineOptions)
+      yPos = this.getNextYPos(yPos, text, doc);
+      text =  "5. VALIDITY";          
+      doc.text(text,20,yPos,lineOptions);
       doc.setFontStyle('normal');
 
-      yPos = this.getNextYPos(yPos, text, doc)
-      text =  "7.1 The information provided to the client of any permanent staff introduced by LEAP INTERNATIONAL RECRUITMENT " +
-              "must be kept strictly confidential and can only be used exclusively for the purpose of employment opportunities by the client or its " +
-              "associated or related company or firm. At no time, shall the information and/or particulars be revealed to any other parties without " +
-              "prior knowledge and consent from LEAP INTERNATIONAL RECRUITMENT. The engagement or employment of the " +
-              "recommended candidate by the client’s associated or firm shall be deemed fit to be an engagement or employment by the client " +
-              "itself. In the premises, the placement fee under Clause 1 shall be payable by the client to LEAP INTERNATIONAL " +
-              "RECRUITMENT."          
-      doc.text(text,20,yPos,lineOptions)
-
-      yPos = this.getNextYPos(yPos, text, doc)
-      text =  "7.2 In the event of such information being passed on by the client to 3rd parties and as a result, the permanent staff is being employed " +
-              "by the 3rd party, the client will then be liable to LEAP INTENTIONAL RECRUITMENT for the placement fee as if the client has " +
-              "employed the permanent staff."          
-      doc.text(text,20,yPos,lineOptions)
-
-      yPos += lineHeight
-
-      doc.setFontStyle('bold');
-      yPos = this.getNextYPos(yPos, text, doc)
-      text =  "8. OCCUPATIONAL HEALTH AND SAFETY"          
-      doc.text(text,20,yPos,lineOptions)
-      doc.setFontStyle('normal');
-
-      yPos = this.getNextYPos(yPos, text, doc)
-      text =  "8.1 The client shall provide the employed candidate with a suitable and safe workplace, which complies with all the relevant " +
-              "occupational health and safety laws. The client should also provide any supervision, instruction and training necessary to ensure " +
-              "safe work being performed by the candidate employed."          
-      doc.text(text,20,yPos,lineOptions)
-
-      yPos = this.getNextYPos(yPos, text, doc)
-      text =  "8.2 The client shall notify LEAP INTERNATIONAL RECRUITMENT and any relevant authorities immediately of any " +
-              "work-related incidents or injuries affecting the physical well-being of the employed candidate."          
-      doc.text(text,20,yPos,lineOptions)
-
-      yPos = this.getNextYPos(yPos, text, doc)
-      text =  "8.3 Notwithstanding the foregoing, LEAP INTERNATIONAL RECRUITMENT shall not be responsible or liable in any way for " +
-              "any breach by the client in regard to occupational health and safety, nor shall LEAP INTERNATIONAL RECRUITMENT be " +
-              "responsible or liable for any injury sustained by the candidate."          
-      doc.text(text,20,yPos,lineOptions)
-
-      yPos += lineHeight
-
-      doc.setFontStyle('bold');
-      yPos = this.getNextYPos(yPos, text, doc)
-      text =  "9. VALIDITY"          
-      doc.text(text,20,yPos,lineOptions)
-      doc.setFontStyle('normal');
-
-      yPos = this.getNextYPos(yPos, text, doc)
-      text =  "9.1 The above terms are subjected or review every 12 months from this date. We reserve the right at any time and from time to " +
+      yPos = this.getNextYPos(yPos, text, doc);
+      text =  "5.1 The above terms are subjected or review every 12 months from this date. We reserve the right at any time and from time to " +
               "time to modify or discontinue, temporarily or permanently, the terms and conditions (or any part thereof) with or without notice, " +
-              "for any reason whatsoever, whether generally or limited to you only."          
-      doc.text(text,20,yPos,lineOptions)
+              "for any reason whatsoever, whether generally or limited to you only.";         
+      doc.text(text,20,yPos,lineOptions);
 
-      //yPos += lineHeight
+      yPos = this.getNextYPos(yPos, text, doc);
+      doc.setDrawColor(0);
+      doc.line(20, yPos, 190, yPos);
 
-      yPos = this.getNextYPos(yPos, text, doc)
-      //doc.setFillColor(0)
-      doc.setDrawColor(0)
-      doc.line(20, yPos, 190, yPos)
+      yPos += lineHeight;
+      yPos += lineHeight;
+      text =  "In agreement with the above terms and conditions, please email this response to";         
+      doc.text(text,105,yPos,{align: "center"});
 
-      yPos += lineHeight
-      yPos += lineHeight
-      text =  "In agreement with the above terms and conditions, please email this response to"          
-      doc.text(text,105,yPos,{align: "center"})
+      yPos += lineHeight;
+      text =  "Company 1, duly signed and stamped.";         
+      doc.text(text,105,yPos,{align: "center"});
 
-      yPos += lineHeight
-      text =  "LEAP INTERNATIONAL RECRUITMENT CO., LTD, duly signed and stamped."          
-      doc.text(text,105,yPos,{align: "center"})
-
-      yPos += lineHeight
+      yPos += lineHeight;
 
       doc.autoTable({
         body: [
@@ -928,52 +717,46 @@ export default {
         styles: {halign: 'center', fontStyle: 'normal'},
         startY: yPos,
         didDrawCell: function (data) {
-        if (data.cell.raw === "Signature:") {
-        //if (data.column.dataKey === 5 && data.cell.section === 'body') {
+          if (data.cell.raw === "Signature:") {
             doc.autoTable({
-                //head: [["One", "Two", "Three", "Four"]],
-                body: [
-                    ["Name:"],
-                    ["Designation:"],
-                    ["Date:"],
-                ],
-                startY: data.cell.y + 21.7,
-                margin: {right: 20,left: data.cell.x },//+ data.cell.padding('left')},
-                bodyStyles: {
-                  font: 'times',
-                  cellPadding: 0.5,
-                  textColor: 0,
-                  lineColor: 0,
-                  lineWidth: 0.5,
-                  halign: 'left',
-                  minCellHeight: 5,
-                  //valign: 'center',
-                },
-                tableWidth: 'auto',
-                theme: 'grid',
-                styles: {
-                    //fontSize: 7,
-                    cellPadding: 1,
-                }
+              body: [
+                ["Name:"],
+                ["Designation:"],
+                ["Date:"],
+              ],
+              startY: data.cell.y + 21.7,
+              margin: {right: 20,left: data.cell.x },
+              bodyStyles: {
+                font: 'times',
+                cellPadding: 0.5,
+                textColor: 0,
+                lineColor: 0,
+                lineWidth: 0.5,
+                halign: 'left',
+                minCellHeight: 5,
+              },
+              tableWidth: 'auto',
+              theme: 'grid',
+              styles: {
+                cellPadding: 1,
+              }
             });
+          }
         }
-    }
       });
       doc.save(pdfName + '.pdf');
-      
-      
     },
     getNextYPos(currentYPos, text, doc){
-      let lineHeight = 3.9
-      let splittedText = doc.splitTextToSize(text, 170)
-      let blockHeight = (splittedText.length) * lineHeight
-      currentYPos += blockHeight 
+      let lineHeight = 3.9;
+      let splittedText = doc.splitTextToSize(text, 170);
+      let blockHeight = (splittedText.length) * lineHeight;
+      currentYPos += blockHeight ;
       if (currentYPos > 250) {
-        doc.addPage()
-        this.setHeader(doc)
-        currentYPos = 70
+        doc.addPage();
+        this.setHeader(doc);
+        currentYPos = 70;
       }
-      return currentYPos
+      return currentYPos;
     }
   }
 }

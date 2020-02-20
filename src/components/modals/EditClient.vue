@@ -1,8 +1,7 @@
 <template>
 <div>
-  <!-- <b-modal id="editclient" hide-footer title="Edit the existing 'Client' element"> -->
-  <div class="midbody" v-if="isLoading" >
-    <b-spinner variant="info" label="Spinning"></b-spinner>
+<div class="midbody" v-if="isLoading" >
+    <b-spinner class="loading" label="Spinning"></b-spinner>
     <span class="loading h2"> &nbsp; Loading...     </span>
   </div>
     
@@ -90,20 +89,6 @@
         <b-form-input disabled v-model="recruiterName"></b-form-input>
       </b-col>
     </b-row>
-    
-    <!--b-row class="my-1">
-      <b-col sm="3">
-        <label>Recruiter:</label>
-      </b-col>
-      <b-col sm="9">
-        <b-dropdown  size="sm" id="dropdown-1" class="m-md-2">
-          <template slot="button-content">
-            {{this.recruiterName}}
-          </template>
-          <b-dropdown-item v-for="recruiter in this.recruiters" class="b-dropdown-item" :key="recruiter.name" @click="onRecruiterChosen(recruiter)">{{ recruiter.name }}</b-dropdown-item>
-        </b-dropdown>
-      </b-col>
-    </b-row-->
     <b-row class="my-1">
       <b-col sm="3">
         <label>Documents saved:</label>
@@ -128,7 +113,6 @@
     </b-button>
     <b-button class="my-btn" size="lg" id="close" @click="close">Close</b-button>
     </div>
-  <!-- </b-modal> -->
   </div>
   </div>
 </div>
@@ -140,7 +124,6 @@ import axios from 'axios';
 
 export default {
   name: 'editclient',
- /*  mode: 'production', */
   components: {
     BRow, BCol,
     BButton,
@@ -148,13 +131,13 @@ export default {
 
   computed: {
     requirementsOK() {
-      return this.contactPerson.length > 0 ? true : false
+      return this.contactPerson.length > 0 ? true : false;
     },
     isEditMode() {
-      return this.mode === 'edit' ? true : false
+      return this.mode === 'edit' ? true : false;
     },
     showRemoveButton() {
-      return this.$store.state.user.profile.access === 'elevated' ? true : false
+      return this.$store.state.user.profile.access === 'elevated' ? true : false;
     },
   },
   methods: {
@@ -162,32 +145,33 @@ export default {
       return  'api/SavedDocuments/' + item.fileRepresentationInDatabaseId;      
     },
     downloadDocument(item) {
-       axios.get(this.filePath(item), {responseType: 'blob'})
-        .then(( {data }) => {
-        const blob = new Blob([data], { type: 'application/pdf' })
-        let link = document.createElement('a')
-        link.href = window.URL.createObjectURL(blob)
-        link.download = item.name
-        link.click()})
-        .catch(err => console.log(err))
+      axios.get(this.filePath(item), {responseType: 'blob'})
+      .then(( {data }) => {
+        const blob = new Blob([data], { type: 'application/pdf' });
+        let link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = item.name;
+        link.click();
+      })
+      .catch(err => console.log(err))
     },
     removeDocument(item) {
        if(confirm("Do you want to remove the document" + item.name + "?")){        
         axios.delete(this.filePath(item))
         .then(() => {
           axios.get('api/clients/' + this.clientId)
-          .then(res => this.items = res.data.documents ? res.data.documents : this.items)
+          .then(res => this.items = res.data.documents ? res.data.documents : this.items);
         })
       }
     },
     close() {
-      this.$router.go(-1)
+      this.$router.go(-1);
     },
     add() {
-      this.isUploading = true
+      this.isUploading = true;
       if (this.clientId > 0)
       {
-        this.pathToElement = 'api/clients/' + this.clientId
+        this.pathToElement = 'api/clients/' + this.clientId;
         axios.put(this.pathToElement, {
           clientId : this.clientId,
           contactPerson: this.contactPerson,
@@ -202,9 +186,9 @@ export default {
         })
         .then()
         .catch(function (error) {
-          console.log(error)
+          console.log(error);
         })
-        .finally( () => this.$router.go(-1))
+        .finally( () => this.$router.go(-1));
       }
       else{
         axios.post('api/clients/', {
@@ -221,48 +205,46 @@ export default {
         })
         .then()
         .catch(function (error) {
-          console.log(error)
+          console.log(error);
         })
-        .finally( () => this.$router.go(-1))
+        .finally( () => this.$router.go(-1));
       }      
     }
   },
   created(){
-    this.isLoading = true
+    this.isLoading = true;
     if (this.$route.query.mode){
-      this.mode = this.$route.query.mode
+      this.mode = this.$route.query.mode;
     }
     if (this.mode === 'edit'){
-
       if (this.$route.query.clientId){
-        this.clientId = this.$route.query.clientId
+        this.clientId = this.$route.query.clientId;
         axios.get('api/clients/' + this.$route.query.clientId)
         .then(res => {
-          this.title = res.data.title
-          this.remarks = res.data.title
-          this.contactPerson = res.data.contactPerson
-          this.companyName = res.data.companyName
-          this.designation = res.data.designation
-          this.telephoneOffice = res.data.telephoneOffice
-          this.telephoneMobile = res.data.telephoneMobile
-          this.email = res.data.email
-          this.address = res.data.address
-          this.remarks = res.data.remarks
-          this.items = res.data.documents
-          this.recruiterName = res.data.recruiter ? res.data.recruiter.name : ''        
-          this.recruiterId = res.data.recruiter ? res.data.recruiter.id : 0  
+          this.title = res.data.title;
+          this.remarks = res.data.title;
+          this.contactPerson = res.data.contactPerson;
+          this.companyName = res.data.companyName;
+          this.designation = res.data.designation;
+          this.telephoneOffice = res.data.telephoneOffice;
+          this.telephoneMobile = res.data.telephoneMobile;
+          this.email = res.data.email;
+          this.address = res.data.address;
+          this.remarks = res.data.remarks;
+          this.items = res.data.documents;
+          this.recruiterName = res.data.recruiter ? res.data.recruiter.name : '';        
+          this.recruiterId = res.data.recruiter ? res.data.recruiter.id : 0;  
         })
         .catch(err => console.log(err))
-        .finally(() => this.isLoading = false)
-
+        .finally(() => this.isLoading = false);
       }else{
-        this.isLoading = false
+        this.isLoading = false;
       }
     }else{
-        this.recruiterName =  this.$store.state.user.profile.name,          
-        this.recruiterId =  this.$store.state.user.profile.recruiterId, 
-        this.isLoading = false
-      }   
+      this.recruiterName =  this.$store.state.user.profile.name,          
+      this.recruiterId =  this.$store.state.user.profile.recruiterId, 
+      this.isLoading = false
+    }   
   },
   data() {
     return {
@@ -278,7 +260,6 @@ export default {
       remarks :	'',
       recruiterId: 0,
       recruiterName: '',
-      // recruiters: [],
       pathToElement : '',
       isUploading: false,
       isLoading: false,

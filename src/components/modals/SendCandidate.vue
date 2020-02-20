@@ -1,7 +1,7 @@
 <template>
 <div>
     <div class="midbody" v-if="isLoading" >
-    <b-spinner variant="info" label="Spinning"></b-spinner>
+    <b-spinner class="loading" label="Spinning"></b-spinner>
     <span class="loading h2"> &nbsp; Loading...     </span>
   </div>
   
@@ -51,7 +51,6 @@ import Multiselect from 'vue-multiselect'
 
 export default {
   name: 'sendcandidate',
- /*  mode: 'production', */
   components: {
     BRow, BCol,
     BButton,
@@ -62,19 +61,12 @@ export default {
     requirementsOK() {
       return this.chosenCandidate !== null ? true : false
     },
-    // compContactPerson() {
-    //   return (this.chosenClient ? this.chosenClient.contactPerson : "");
-    // },
-    // clientsTransformedList() {
-    //   return this.clientsCombo
-    // }
   },
   methods: {
     close() {
-      this.$router.go(-1)
+      this.$router.go(-1);
     },
     add() {
-     // if (this.jobId > 0){
         this.pathToElement = 'api/sendToInterview';
         axios.post(this.pathToElement, {
           jobId : this.jobId,
@@ -83,36 +75,34 @@ export default {
         })
         .then()
         .catch()
-        .finally( () => this.$router.go(-1))     
+        .finally( () => this.$router.go(-1));     
     },
   },
   created(){
-    this.isLoading = true
+    this.isLoading = true;
     if (this.$route.query.jobId){
-      this.jobId = this.$route.query.jobId
+      this.jobId = this.$route.query.jobId;
     } 
     if (this.$route.query.title){
-      this.title = this.$route.query.title
+      this.title = this.$route.query.title;
     } 
     axios.get('api/candidates')
       .then(res => {
-        this.candidates = res.data
+        this.candidates = res.data;
         var x;
         for (x in this.candidates) {          
-
           this.candidates[x].candidateNemail = this.candidates[x].name;
           if (this.candidates[x].email){
             this.candidates[x].candidateNemail += " (" + this.candidates[x].email + ")";
           }           
         }
-        this.chosenCandidate = this.candidates[0]
+        this.chosenCandidate = this.candidates[0];
       })
       .catch(err => console.log(err))
-      .finally(() => this.isLoading = false)   
+      .finally(() => this.isLoading = false);  
   },
   data() {
     return {
-      //mode: '',
       jobId : 0,
       title : '',
       candidates : [],

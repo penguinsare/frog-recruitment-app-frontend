@@ -16,9 +16,6 @@
         <span class="col-6 my-1">Rows per page</span>
       </div>
     </div>
-    <!-- <b-form-group   label-cols-sm="6"  label="Rows per page" class="col-2"  label-for="select-pages">
-      <b-form-select id="select-pages"  :options="[{text:5,value:5},{text:10,value:10},{text:15,value:15}]" v-model="perPage"></b-form-select>
-    </b-form-group> -->
     <b-form-group   class="col-2" >
       <div class="row justify-content-end">
         <b-button variant="primary" @click="addNew()">Add Job</b-button>
@@ -28,16 +25,12 @@
   </div>
 
   <div class="midbody" v-if="isLoading" >
-    <b-spinner variant="info" label="Spinning"></b-spinner>
+    <b-spinner class="loading" label="Spinning"></b-spinner>
     <span class="loading h2"> &nbsp; Loading...     </span>
   </div>
 
   <div v-else>
-  <!-- Main table element -->
   <b-table striped hover :sort-direction="sortDirection" :sort-compare-options="{ numeric: true, sensitivity: 'base' }" :sort-desc.sync="desc" :sort-by.sync="sortBy" :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter">
-    <!-- <template slot="id" scope="item">
-      {{item.item.jobId}}
-    </template> -->
     <template slot="title" scope="item">
       {{item.value}}
     </template>
@@ -45,7 +38,6 @@
        <a href="#" @click.prevent="filterEmployer(item.item)">
          {{(item.item.client !== null) ? item.item.client.companyName : null}}
       </a>
-      <!-- {{(item.item.client !== null) ? item.item.client.companyName : null}} -->
     </template>
     <template slot="contact" scope="item">
       {{(item.item.client !== null) ?item.item.client.contactPerson : null}}
@@ -54,9 +46,6 @@
       {{(item.item.recruiter !== null) ? item.item.recruiter.name : null}}
     </template>
     <template slot="documents" scope="item">
-      <!-- <a :href="filePath(item)" @click.prevent="downloadDocument(filePath(item), fileName(item))">
-        {{item.item.documents[0] ? item.item.documents[0].name : null}} 
-      </a>       -->
       <ul>
         <li v-for="document in item.item.documents" :key="document.FileRepresentationInDatabaseId">
           <a :href="filePath(document)" @click.prevent="downloadDocument(filePath(document), fileName(document))">
@@ -65,13 +54,6 @@
         </li>
       </ul>
     </template>
-    <!-- <template slot="doc" scope="item">
-      <ul>
-        <li v-for="document in item.item.documents" :key="document.fileRepresentationInDatabaseId">
-          {{ document.name }} <b-button>str</b-button>
-        </li>
-      </ul>
-    </template> -->
     <template slot="candidate" scope="item">
       <ul>
         <li v-for="candidate in item.item.candidatesSent" :key="candidate.candidateSentToInterviewId">
@@ -107,11 +89,9 @@
     <template slot="remarks" scope="item">
       {{item.item.remarks}}
     </template>
-  <!-- Column to control data.. -->
     <template slot="actions" scope="items">
       <b-button class="my-btn" variant="warning" size="sm" @click="edit(items.item)" v-if="showEditButtons(items.item)">Edit</b-button>
       <b-button class="my-btn" variant="info" size="sm" @click="uploadCv(items.item)" v-if="showEditButtons(items.item)">Upload File</b-button> 
-      <!-- <b-button class="my-btn" variant="primary" size="sm" @click="placeCandidate(items.item)" v-if="showEditButtons(items.item)" >Place Candidate</b-button> -->
       <b-button class="my-btn" variant="success" size="sm" @click="sendCandidateToInterview(items.item)" v-if="showEditButtons(items.item)" >Send Candidate</b-button>      
       <b-button class="rem-btn my-btn" variant="danger" size="sm" @click="remove(items.item)" v-if="showRemoveButton">Remove</b-button>
     </template>
@@ -128,13 +108,12 @@ import {BTable, BFormGroup,
         BFormInput, BButton,
         BFormSelect, BPagination,
         BContainer, BRow,
-        BCol} from 'bootstrap-vue'; /* 'c:/Users/shide/node_modules/bootstrap-vue/es/components/table'; */
+        BCol} from 'bootstrap-vue'; 
 import axios from 'axios';
 import EditJob from './modals/EditJob'
 
 export default {
   name: 'app',
- /*  mode: 'production', */
   components: {
     BTable,
     BFormGroup,
@@ -150,16 +129,10 @@ export default {
   data() {
     return {
       items: [],
-      //sort: 'desc',
       sortDirection: 'desc',
       desc: true,
       sortBy: 'id',
       fields: {
-        // id: {
-        //   key: 'id',
-        //   label: "id",
-        //   sortable: true,
-        // },
         client: {
           label: 'Company Name',
           sortable: true
@@ -210,53 +183,45 @@ export default {
     }
   },
   created(){
-    this.isLoading = true
+    this.isLoading = true;
     if(this.$route.query.filterString){
-        this.filter = this.$route.query.filterString
+        this.filter = this.$route.query.filterString;
     }
     if(this.$route.query.showBackButton){
-        this.showBackButton = this.$route.query.showBackButton
+        this.showBackButton = this.$route.query.showBackButton;
     }
     axios.get('api/jobs')
       .then(res =>{ 
         this.items = res.data
-        //console.log(this.items)
-        
       })
       .catch(err => console.log(err.message))
-      .finally(() => this.isLoading = false)
+      .finally(() => this.isLoading = false);
   },
   computed: {
     maxRowsNumber() {
-      return this.items.length
+      return this.items.length;
     },
     showButton(){
-      // return this.$route.name === 'filtered-jobs' ? true : false
-     this.isLoading = true
-     if(this.$route.query.filterString){
-        this.filter = this.$route.query.filterString
-    }else{
-      this.filter = ''
-    }
-    if(this.$route.query.showBackButton){
-        this.showBackButton = this.$route.query.showBackButton
-    }
-     axios.get('api/jobs')
-      .then(res =>{ 
-        this.items = res.data
-        this.items
-      })
-      .catch(err => console.log(err.message))
-      .finally(() => this.isLoading = false)
-
-      return this.$route.name === 'filtered-jobs' ? true : false
+      this.isLoading = true
+      if(this.$route.query.filterString){
+        this.filter = this.$route.query.filterString;
+      }else{
+        this.filter = '';
+      }
+      if(this.$route.query.showBackButton){
+        this.showBackButton = this.$route.query.showBackButton;
+      }
+      axios.get('api/jobs')
+        .then(res =>{ 
+          this.items = res.data;
+        })
+        .catch(err => console.log(err.message))
+        .finally(() => this.isLoading = false);
+      return this.$route.name === 'filtered-jobs' ? true : false;
     },
     showRemoveButton(){
       return  this.$store.getters.user.profile.access  == 'elevated' ? true : false;
     },
-    // showEditButtons(item){
-    //    return  this.$store.getters.user.profile.recruiterId  == item.RecrutierId ? true : false;
-    // },
   },
   methods: {
     showCandidateEmailIfExist(candidate){
@@ -265,14 +230,14 @@ export default {
       }
     },
     showEditButtons(item){
-       return  (this.$store.getters.user.profile.recruiterId  == item.recruiter.id || 
-                this.$store.getters.user.profile.access  === 'elevated') ? true : false;
+      return  (this.$store.getters.user.profile.recruiterId  == item.recruiter.id || 
+              this.$store.getters.user.profile.access  === 'elevated') ? true : false;
     },
     close(){
-        this.$router.go(-1)
+      this.$router.go(-1);
     },
     filterEmployer(item){
-      this.filter = item.client ? item.client.companyName : ''
+      this.filter = item.client ? item.client.companyName : '';
     },
     sendCandidateToInterview(item) {
       this.$router.push({
@@ -280,7 +245,8 @@ export default {
         query: {
           jobId: item.jobId,
           title: item.title,
-        }})
+        }
+      })
     },
     placeCandidate(item) {
       this.$router.push({
@@ -288,12 +254,12 @@ export default {
         query: {
           jobId: item.jobId,
           title: item.title,
-        }})
+        }
+      })
     },
     fileName(document){
-      //console.log('documents exists' + document != null);
       if (document){
-        return  document.name ; 
+        return  document.name; 
       }           
     },   
     filePath(document){
@@ -303,22 +269,20 @@ export default {
     },
     downloadDocument(url, name) {
        axios.get(url, {responseType: 'blob'})
-        .then(( {data }) => {
-        const blob = new Blob([data], { type: 'application/pdf' })
-        let link = document.createElement('a')
-        link.href = window.URL.createObjectURL(blob)
-        link.download = name
-        link.click()})
-        .catch(err => console.log(err))
-      //}
-      
+        .then(({data}) => {
+          const blob = new Blob([data], { type: 'application/pdf' });
+          let link = document.createElement('a');
+          link.href = window.URL.createObjectURL(blob);
+          link.download = name;
+          link.click();
+        })
+        .catch(err => console.log(err));
     },
     uploadCv(item){
       this.$router.push({
         name: 'upload-job-file',
         query: {
           jobId: item.jobId,
-          // documentId: item.documents[0] ? item.documents[0].fileRepresentationInDatabaseId : 0,
         }
       })
     },
@@ -327,7 +291,8 @@ export default {
         name: 'add-job',
         query: {
           mode: 'add'
-        }})
+        }
+      })
     },
     edit(item) {
       this.$router.push({
@@ -335,12 +300,6 @@ export default {
         query: {
           mode: 'edit',
           jobId: item.jobId,
-          // title: item.title,
-          // clientId: item.client ? item.client.id : 0,
-          // recruiterId: item.recruiter ? item.recruiter.id : 0,
-          // recruiterName: item.recruiter ? item.recruiter.name : '',
-          // jobStatusId: item.jobStatus ? item.jobStatus.jobStatusId : 0,
-          // remarks: item.remarks,
         }
       })
     },
@@ -350,13 +309,13 @@ export default {
         this.objToRemove += item.jobId;
         axios.delete(this.objToRemove)
           .then(function(response) {
-            // console.log(response)
           })
           .catch(err => console.log(err))
           .finally( () => 
             axios.get('api/jobs')
               .then(res => this.items = res.data)
-              .catch(err => console.log(err)))
+              .catch(err => console.log(err))
+          );
       }
     }
   }

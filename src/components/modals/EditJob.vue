@@ -1,13 +1,12 @@
 <template>
 <div>
   <div class="midbody" v-if="isLoading" >
-    <b-spinner variant="info" label="Spinning"></b-spinner>
+    <b-spinner class="loading" label="Spinning"></b-spinner>
     <span class="loading h2"> &nbsp; Loading...     </span>
   </div>
 
 
 <div v-else>
-  <!-- <b-modal id="editJob" hide-footer title="Edit the existing 'Job' element"> -->
   <div class="container">
       <br>
       <div v-if="isEditMode">
@@ -45,11 +44,6 @@
       </b-col>
       <b-col sm="9">
         <multiselect   v-model="title" :options="jobTitles"></multiselect>
-        <!-- <b-form-input id="input-jobtitle" :state="requirementsOK"
-        aria-describedby="input-live-feedback" v-model="title"></b-form-input>
-        <b-form-invalid-feedback id="input-live-feedback">
-          Job title cannot be empty!
-        </b-form-invalid-feedback> -->
       </b-col>
     </b-row>
     <b-row class="my-3">
@@ -98,8 +92,7 @@
             <router-link :to="{name: 'edit-candidate', query: {candidateId: item.item.candidateId, loadInfoFromBackend: true}}" > 
               {{item.item.candidateName + ' (' + item.item.candidateEmail + ') '}} 
             </router-link>
-            <b-button  class="btn btn-sm btn-circle" style="border-radius: 60%;" variant="danger" @click="removeCandidateSent(item.item)" v-if="showRemoveButton">X</b-button>
-            <!-- <b-spinner v-if="removeInProgress" style="width: 2rem; height: 2rem;" > </b-spinner> -->
+            <b-button  class="btn btn-sm btn-circle" style="border-radius: 60%;" variant="danger" @click="removeCandidateSent(item.item)" v-if="showRemoveButton">X</b-button>           
           </template>
         </b-table>
       </b-col>
@@ -172,12 +165,8 @@ import {BRow, BCol, BButton, BDropdown} from 'bootstrap-vue';
 import axios from 'axios';
 import Multiselect from 'vue-multiselect'
 
-  // register globally
- // Vue.component('multiselect', Multiselect)
-
 export default {
   name: 'editjob',
- /*  mode: 'production', */
   components: {
     BRow, BCol,
     BButton,
@@ -187,35 +176,26 @@ export default {
   computed: {
     jobTitles() {
       return (this.jobs && this.chosenClient) ? this.jobs
-      .filter(j =>  j.client.contactPerson === this.chosenClient.contactPerson && j.jobStatus ? j.jobStatus.status.toUpperCase() === "OPEN" ? true : false : false)
-      .map(j => j.title) : []   
+        .filter(j =>  j.client.contactPerson === this.chosenClient.contactPerson && j.jobStatus ? j.jobStatus.status.toUpperCase() === "OPEN" ? true : false : false)
+        .map(j => j.title) : [];  
     },
     requirementsOK() {
-      return this.title.length > 0 ? true : false
+      return this.title.length > 0 ? true : false;
     },
     compContactPerson() {
       return (this.chosenClient ? this.chosenClient.contactPerson : "");
     },
     clientsTransformedList() {
-      return this.clientsCombo
+      return this.clientsCombo;
     },
     isEditMode() {
-      return this.mode === 'edit' ? true : false
+      return this.mode === 'edit' ? true : false;
     },
     showRemoveButton() {
-      return this.$store.state.user.profile.access === 'elevated' ? true : false
+      return this.$store.state.user.profile.access === 'elevated' ? true : false;
     },
   },
   methods: {
-    // formatDate(){
-    //   if (this.startDate == null)
-    //   {
-    //     return ' '
-    //   }else{
-    //     var res = this.startDate.split("-");
-    //     return res[2] + '-' + res[1] + '-' + res[0]
-    //   }       
-    // },
     candidateName(item){
           return  item.name;      
     },
@@ -233,26 +213,25 @@ export default {
         axios.delete(this.filePath(item))
         .then(() => {
           axios.get('api/candidates/' + this.candidateId)
-          .then(res => this.items = res.data.documents ? res.data.documents : this.items)
-        })
+          .then(res => this.items = res.data.documents ? res.data.documents : this.items);
+        });
       }
     },
     removeCandidateSent(item) {
        if(confirm("Do you want to remove " + item.candidateName + "?")){
-        this.removeInProgress = true
+        this.removeInProgress = true;
         axios.delete('api/sendToInterview/' + item.candidateSentToIntrerviewId)
         .then(() => {
           axios.get('api/jobs/' + this.jobId)
-          .then(res => this.items = res.data.candidatesSent ? res.data.candidatesSent : this.items)
-        })
+          .then(res => this.items = res.data.candidatesSent ? res.data.candidatesSent : this.items);
+        });
       }
     },
     close() {
-      this.$router.go(-1)
+      this.$router.go(-1);
     },
     add() {
-      this.isUploading = true
-      
+      this.isUploading = true;      
       if (this.jobId > 0){
         this.pathToElement = 'api/jobs/' + this.jobId;
         axios.put(this.pathToElement, {
@@ -268,9 +247,9 @@ export default {
         })
         .then()
         .catch(function (error) {
-          console.log(error)
+          console.log(error);
         })
-        .finally( () => this.$router.go(-1))
+        .finally( () => this.$router.go(-1));
       }
       else{
         axios.post('api/jobs/', {
@@ -285,61 +264,38 @@ export default {
         })
         .then()
         .catch(function (error) {
-          console.log(error)
+          console.log(error);
         })
-        .finally( () => this.$router.go(-1))
+        .finally( () => this.$router.go(-1));
       }
       
     },
   },
   created(){
-    this.isLoading = true 
-
+    this.isLoading = true;
     if (this.$route.query.mode){
-      this.mode = this.$route.query.mode
+      this.mode = this.$route.query.mode;
     } 
     if (this.$route.query.mode === 'edit'){  
       if (this.$route.query.jobId){
-        this.jobId = this.$route.query.jobId
-      }  
-      // if (this.$route.query.title){
-      //   this.title = this.$route.query.title
-      // }
-      // if (this.$route.query.clientId){
-      //   this.clientId = this.$route.query.clientId
-      // }
-      // if (this.$route.query.recruiterId){
-      //   this.recruiterId = this.$route.query.recruiterId
-      // }
-      // if (this.$route.query.recruiterName){
-      //   this.recruiterName = this.$route.query.recruiterName
-      // }
-      // if (this.$route.query.remarks){
-      //   this.remarks = this.$route.query.remarks
-      // }  
-      // if (this.$route.query.jobStatusId){
-      //   this.jobStatusId = this.$route.query.jobStatusId
-      // }
-      // if (this.$route.query.candidateId){
-      //   this.candidateId = this.$route.query.candidateId
-      // }
+        this.jobId = this.$route.query.jobId;
+      }    
     }
     else{
-      this.recruiterId = this.$store.state.user.profile.recruiterId
-      this.recruiterName = this.$store.state.user.profile.name
+      this.recruiterId = this.$store.state.user.profile.recruiterId;
+      this.recruiterName = this.$store.state.user.profile.name;
     }
 
     axios.get('api/clients')
     .then(res => {
-      this.clients = res.data
+      this.clients = res.data;
       var x;
       for (x in this.clients) {          
         this.clients[x].companyNcontact = this.clients[x].companyName + " (" + this.clients[x].contactPerson + ")";
-        //this.chosenClient = (this.clients[x].clientId == this.clientId) ? this.clients[x] : this.chosenClient
       }
       axios.get('api/jobstatus')
       .then(res => {
-        this.jobStatuses = res.data
+        this.jobStatuses = res.data;
         if (this.jobStatusId > 0) {
           var x;
           for (x in this.jobStatuses)
@@ -351,29 +307,26 @@ export default {
         }  
         axios.get('api/jobs')
         .then(res => {
-          this.jobs = res.data
-
+          this.jobs = res.data;
           if (this.$route.query.mode === 'edit'){
             axios.get('api/jobs/' + this.$route.query.jobId)
             .then(res => {
-              this.title = res.data.title
-              this.remarks = res.data.remarks
-              this.jobStatusId = res.data.jobStatus ? res.data.jobStatus.jobStatusId : this.jobStatusId
-              this.clientId = res.data.client ? res.data.client.id : this.clientId
-              this.recruiterId = res.data.recruiter ? res.data.recruiter.id : this.recruiterId
-              this.recruiterName = res.data.recruiter ? res.data.recruiter.name : this.recruiterName
-              this.items = res.data.candidatesSent
-              this.docItems = res.data.documents
-              this.placement = res.data.placement
-              this.isLoading = false
-              this.baseSalary = res.data.baseSalary
-              this.fee = res.data.fee
-              this.startDate = res.data.startDate
-
+              this.title = res.data.title;
+              this.remarks = res.data.remarks;
+              this.jobStatusId = res.data.jobStatus ? res.data.jobStatus.jobStatusId : this.jobStatusId;
+              this.clientId = res.data.client ? res.data.client.id : this.clientId;
+              this.recruiterId = res.data.recruiter ? res.data.recruiter.id : this.recruiterId;
+              this.recruiterName = res.data.recruiter ? res.data.recruiter.name : this.recruiterName;
+              this.items = res.data.candidatesSent;
+              this.docItems = res.data.documents;
+              this.placement = res.data.placement;
+              this.isLoading = false;
+              this.baseSalary = res.data.baseSalary;
+              this.fee = res.data.fee;
+              this.startDate = res.data.startDate;
               var x;
               for (x in this.clients) {          
-                //this.clients[x].companyNcontact = this.clients[x].companyName + " (" + this.clients[x].contactPerson + ")";
-                this.chosenClient = (this.clients[x].clientId == this.clientId) ? this.clients[x] : this.chosenClient
+                this.chosenClient = (this.clients[x].clientId == this.clientId) ? this.clients[x] : this.chosenClient;
               }
               var y;
               for (y in this.jobStatuses)
@@ -387,18 +340,16 @@ export default {
                 this.placement.name = res.data.name;
               })
             })
-            .catch(() => this.isLoading = false)
+            .catch(() => this.isLoading = false);
           }
           else{
-            this.isLoading = false
+            this.isLoading = false;
           } 
         })
-        .catch(() => this.isLoading = false)                  
+        .catch(() => this.isLoading = false);                
       })
     })
-    .catch(() => this.isLoading = false)
-    //.finally(() => this.isLoading = false)
-    
+    .catch(() => this.isLoading = false);    
   },
   data() {
     return {
@@ -425,28 +376,6 @@ export default {
       fee: '',
       startDate: '',
       jobs: [],
-      // placementFields: {
-      //   candidate: {
-      //     label: 'Candidate',
-      //     sortable: false
-      //   }, 
-      //   basicSalary: {
-      //     label: 'Basic Salary (THB)',
-      //     sortable: false
-      //   },
-      //   fee: {
-      //     label: 'Fee (%)',
-      //     sortable: false
-      //   },
-      //   startingDate: {
-      //     label: 'Starting Date',
-      //     sortable: false
-      //   },
-      //   actions: {
-      //     label: ' ',
-      //     sortable: false
-      //   },
-      //},
       fields:{
         candidate: {
           label: 'Name',

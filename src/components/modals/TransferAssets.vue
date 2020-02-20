@@ -53,7 +53,6 @@ import Multiselect from 'vue-multiselect'
 
 export default {
   name: 'transferAssets',
- /*  mode: 'production', */
   components: {
     BRow, BCol,
     BButton,
@@ -65,21 +64,13 @@ export default {
         return  this.chosenRecruiter ? true : false;
     return true 
     },
-    // passwordsMatch: function() {
-    //    return this.confirmPassword.length > 0 && this.password == this.confirmPassword;
-    // },
-    // passwordNotEmpty() {
-    //   return this.password.length > 0 ? true : false;
-    // },
   },
   methods: {
     close() {
-      this.$router.go(-1)
+      this.$router.go(-1);
     },
-    add() {
-     
+    add() {     
       axios.post('api/users/transfer-assets', {
-          //fromUsername: this.username,
           fromRecruiterId: this.recruiterId,
           toRecruiterId: this.chosenRecruiter.recruiterId,
 
@@ -88,22 +79,22 @@ export default {
       .catch(function (error) {
         console.log(error);
       })
-      .finally(() => this.$router.go(-1))
+      .finally(() => this.$router.go(-1));
     },
   },
   created(){
     if (this.$route.query.username){
-      this.username = this.$route.query.username
+      this.username = this.$route.query.username;
     }
     if (this.$route.query.name){
-      this.name = this.$route.query.name
+      this.name = this.$route.query.name;
     }
     if (this.$route.query.recruiterId){
-      this.recruiterId = this.$route.query.recruiterId
+      this.recruiterId = this.$route.query.recruiterId;
     }
     if (this.$route.query.email){
-      this.email = this.$route.query.email
-      this.nameNemail = this.name + ' (' + this.email + ')'
+      this.email = this.$route.query.email;
+      this.nameNemail = this.name + ' (' + this.email + ')';
     }
     else{
         this.nameNemail = name;
@@ -111,7 +102,7 @@ export default {
     
     axios.get('api/recruiters')
       .then(res => this.recruiters = res.data.filter(r => r.recruiterId !== this.recruiterId))
-      .catch(err => console.log(err.message))
+      .catch(err => console.log(err.message));
   },
   data() {
     return {

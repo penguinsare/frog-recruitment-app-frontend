@@ -22,7 +22,7 @@
   </div>
 
  <div class="midbody" v-if="isLoading" >
-  <b-spinner variant="info" label="Spinning"></b-spinner>
+  <b-spinner class="loading" label="Spinning"></b-spinner>
   <span class="loading h2"> &nbsp; Loading...     </span>
 </div>
 
@@ -34,7 +34,6 @@
       </template>
       <template slot="recruiterName" scope="item">
         {{item.item.recruiter.name}}
-        <!-- {{(item.item.recruiter !== null) ? item.item.recruiter.name : null}} -->
       </template>   
       <template slot="recruiterEmail" scope="item">
         {{(item.item.recruiter !== null) ? item.item.recruiter.email : null}}
@@ -47,7 +46,6 @@
       </template>   
     <!-- Column to control data.. -->
       <template slot="actions" scope="items">
-        <!-- <b-button class="my-btn" size="sm" @click="edit(items.item)">Edit</b-button> -->
         <b-button class="my-btn" variant="warning" size="sm" @click="edit(items.item)">Edit</b-button>
         <b-button class="my-btn" variant="info" size="sm" @click="changePassword(items.item)">Change Password</b-button>
         <b-button class="my-btn" variant="success" size="sm" @click="transferAssets(items.item)">Transfer Assets</b-button>
@@ -66,14 +64,13 @@ import {BTable, BFormGroup,
         BFormInput, BButton,
         BFormSelect, BPagination,
         BContainer, BRow,
-        BCol} from 'bootstrap-vue'; /* 'c:/Users/shide/node_modules/bootstrap-vue/es/components/table'; */
+        BCol} from 'bootstrap-vue'; 
 import axios from 'axios';
 import AddUser from './modals/AddUser'
 import ChangeUserPassword from './modals/ChangeUserPassword'
 
 export default {
   name: 'app',
- /*  mode: 'production', */
   components: {
     BTable,
     BFormGroup,
@@ -127,15 +124,15 @@ export default {
     }
   },
   created(){
-    this.isLoading = true
+    this.isLoading = true;
     axios.get('api/users')
       .then(res => this.items = res.data)
       .catch(err => console.log(err.message))
-      .finally(() => this.isLoading = false)
+      .finally(() => this.isLoading = false);
   },
   computed: {
     maxRowsNumber() {
-      return this.items.length
+      return this.items.length;
     },
   },
   methods: {
@@ -147,7 +144,8 @@ export default {
         name: 'add-user',
         query: {
           mode: 'add'
-        }});
+        }
+      });
     },
     edit(item) {
       this.$router.push({
@@ -159,7 +157,8 @@ export default {
           email: item.recruiter.email,
           phone: item.recruiter.phone,
           accessPermission: item.accessPermission,
-        }});
+        }
+      });
     },
     changePassword(item) {
       this.$router.push({
@@ -192,7 +191,8 @@ export default {
         .finally( () => 
           axios.get('api/users')
             .then(res => this.items = res.data)
-            .catch(err => console.log(err)))
+            .catch(err => console.log(err))
+        )
       }
     }
   }

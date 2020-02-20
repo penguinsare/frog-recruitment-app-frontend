@@ -1,29 +1,10 @@
 <template>
 <body>
-  <!-- <ul  class="topnav" >
-    <li><img src="../public/image.png"><span id="logo">Leap International</span></li>
-    <li><router-link v-if="!userAuthenticated" to='/login'>Login</router-link></li>
-    <li><router-link v-if="userAuthenticatedAndNotAdmin" :to="{name:'jobs'}">Jobs</router-link></li>
-    <li><router-link v-if="userAuthenticatedAndNotAdmin" to='/clients'>Clients</router-link></li>
-    <li><router-link v-if="userAuthenticatedAndNotAdmin" to='/candidates'>Candidates</router-link></li>
-    <li><router-link  to='/terms-of-business'>Terms of business</router-link></li> -->
-    <!-- <li><router-link v-if="userAuthenticatedAndHasElevatedAccess" to='/recruiters'>Recruiters</router-link></li>
-    <li><router-link v-if="userAuthenticatedAndAdmin" to='/users'>Users</router-link></li>
-    <li class="right"><a v-if="userAuthenticated" @click="logout()"> Logout</a></li>
-    <li class="right"><a v-if="userAuthenticated" to='/user'>{{myUserName}}</a></li>
-    
-  </ul> -->
 <b-navbar class="custom-navbar my-0"  toggleable="md" type="dark">
    <b-navbar-brand href="/">
      <img src="../public/image.png" class="d-inline-block align-top" width="30" height="30" alt="">
-     <span id="logo">Leap International</span>
+     <span id="logo">Frog Recruitment App</span>
   </b-navbar-brand>
-  <!-- <a class="nav-link navbar-brand active" href="#">
-    <img src="../public/image.png" width="30" height="30" alt="">
-    <span id="logo">Leap International</span>
-  </a> -->
-  <!-- <button class="nav-toggler" data-toggle="collapse" data-target="#navbartogglerdemo01" aria-controls="navbartogglerdemo01" aria-expanded="false" aria-label="toggle navigation" >--</button>
-  <div class="collapse navbar-collapse" id="navbartogglerdemo01"> -->
     <b-navbar-toggle target="nav-collapse" >
       <div class="menu-icon-div"></div>
       <div class="menu-icon-div"></div>
@@ -42,46 +23,15 @@
 
       <!-- Right aligned nav items -->
       <b-navbar-nav class="ml-auto">
-        <!-- <b-nav-item v-if="userAuthenticated" disabled><span class="custom-link">{{myUserName}}</span></b-nav-item> -->
-        <!-- <b-nav-item v-if="userAuthenticated" @click="logout()" ><span class="custom-link">Logout</span></b-nav-item> -->
         <b-nav-form class="ml-auto">
           <em v-if="userAuthenticated" class="custom-link mx-4">{{myUserName}}</em>
-          <b-button size="sm" class="my-2 my-sm-0" style="background-color:#009cad;" v-if="userAuthenticated" @click="logout()" >Logout</b-button>
+          <b-button size="sm" class="my-2 my-sm-0" style="background-color:#9CC925;" v-if="userAuthenticated" @click="logout()" >Logout</b-button>
         </b-nav-form>
-        <!-- <b-nav-form>
-          <b-form-input size="sm" class="mr-sm-2" placeholder="Search"></b-form-input>
-          <b-button size="sm" class="my-2 my-sm-0" type="submit">Search</b-button>
-        </b-nav-form>
-
-        <b-nav-item-dropdown text="Lang" right>
-          <b-dropdown-item href="#">EN</b-dropdown-item>
-          <b-dropdown-item href="#">ES</b-dropdown-item>
-          <b-dropdown-item href="#">RU</b-dropdown-item>
-          <b-dropdown-item href="#">FA</b-dropdown-item>
-        </b-nav-item-dropdown>
-
-        <b-nav-item-dropdown right>
-          Using 'button-content' slot
-          <template v-slot:button-content>
-            <em>User</em>
-          </template>
-          <b-dropdown-item href="#">Profile</b-dropdown-item>
-          <b-dropdown-item href="#">Sign Out</b-dropdown-item>
-        </b-nav-item-dropdown> -->
+      
       </b-navbar-nav>
     </b-collapse>
  
-</b-navbar>
-   <!-- <ul  class="topnav" >
-    <li><img src="../public/image.png"><span id="logo">Leap International</span></li>
-    <li><router-link v-if="userAuthenticatedAndNotAdmin" :to="{name:'jobs'}">Jobs</router-link></li>
-    <li><router-link v-if="userAuthenticatedAndNotAdmin" to='/clients'>Clients</router-link></li>
-    <li><router-link v-if="userAuthenticatedAndNotAdmin" to='/candidates'>Candidates</router-link></li>
-    <li><router-link v-if="userAuthenticatedAndAdmin" to='/users'>Users</router-link></li>
-    <li class="right"><a v-if="userAuthenticated" @click="logout()"> Logout</a></li>
-    <li class="right"><a v-if="userAuthenticated" to='/user'>{{myUserName}}</a></li>
-    
-  </ul> -->
+</b-navbar>   
   <router-view style="padding:15px 16px 15px 15px;overflow-x: auto;" />
 
       
@@ -97,7 +47,6 @@ import {BNavbar, BTable, BFormGroup,
 import JobsTable from './components/JobsTable';
 import CandidatesTable from './components/CandidatesTable';
 import ClientsTable from './components/ClientsTable';
-import RecruitersTable from './components/RecruitersTable';
 import TermsOfBusiness from './components/TermsOfBusiness.vue';
 import axios from 'axios';
 
@@ -107,7 +56,6 @@ export default {
     JobsTable,
     CandidatesTable,
     ClientsTable,
-    RecruitersTable,
     TermsOfBusiness,
     BNavbar,
   },
@@ -135,13 +83,13 @@ export default {
       return  this.showLogoutButton;
     },
     userAuthenticatedAndNotAdmin() {      
-      return  this.showLogoutButton && this.$store.getters.user.profile.name !== "admin1" ? true : false;
+      return  this.showLogoutButton && this.$store.getters.user.profile.name !== "administrator" ? true : false;
     },
     userAuthenticatedAndAdmin() {
-      return  this.showLogoutButton && this.$store.getters.user.profile.name === "admin1" ? true : false;
+      return  this.showLogoutButton && this.$store.getters.user.profile.name === "administrator" ? true : false;
     },
     myUserName() {
-      return  this.$store.state.user.profile.name 
+      return  this.$store.state.user.profile.name; 
     },
   },
   methods:{
@@ -154,18 +102,15 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-// <style lang="scss">
   body {
     margin: 0;
   }
   @import 'styles/layout.scss';
-  //@import 'styles/menu-toggle-btn.scss';
-  //@import 'styles/menu.scss';
   @import 'styles/content-overlay.scss';
   @import 'styles/media-queries.scss';
 
 #logo {
-  color: #009cad;
+  color: #9CC925;
   font-size: 18px;
   margin-top: 6%;
   float:left; 
@@ -200,7 +145,7 @@ ul.topnav li a:hover:not(.active) {
   cursor: pointer;
   }
 
-ul.topnav li a.active {background-color: #4CAF50;}
+ul.topnav li a.active {background-color: #9CC925;}
 
 ul.topnav li.right {float: right;}
 
@@ -217,12 +162,12 @@ ul.topnav li.right {float: right;}
   //margin: 25px 0px 25px 0px;
 }
 .custom-nav-item:hover {
-  background-color: #009cad;
+  background-color: #9CC925;
   color: white;
   cursor: pointer;
 }
 .router-link-active {
-  background-color: #009cad;
+  background-color: #9CC925;
   color: white;
   cursor: pointer;
 }

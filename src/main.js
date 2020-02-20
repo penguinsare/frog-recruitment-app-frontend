@@ -13,11 +13,8 @@ Vue.use(BootstrapVue)
 
 
 
-Vue.config.productionTip = false
-//axios.defaults.baseURL = 'https://some-crm.azurewebsites.net';
+Vue.config.productionTip = false;
 axios.defaults.baseURL = 'https://localhost:57042';
-//axios.defaults.baseURL = 'https://polytech-software.com';
-// axios.defaults.baseURL = 'https://crm.leap-intl.com';
 const globalData = {
   isAuthenticated: false,
   user: '',

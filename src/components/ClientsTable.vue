@@ -22,7 +22,8 @@
   </div>
 
   <div class="midbody" v-if="isLoading" >
-    <b-spinner variant="info" label="Spinning"></b-spinner>
+    <!-- <b-spinner variant="info" label="Spinning"></b-spinner> -->
+    <b-spinner class="loading" label="Spinning"></b-spinner>
     <span class="loading h2"> &nbsp; Loading...     </span>
   </div>
 
@@ -83,13 +84,12 @@ import {BTable, BFormGroup,
         BFormInput, BButton,
         BFormSelect, BPagination,
         BContainer, BRow,
-        BCol} from 'bootstrap-vue'; /* 'c:/Users/shide/node_modules/bootstrap-vue/es/components/table'; */
+        BCol} from 'bootstrap-vue'; 
 import axios from 'axios';
 import EditClient from './modals/EditClient'
 
 export default {
   name: 'app',
- /*  mode: 'production', */
   components: {
     BTable,
     BFormGroup,
@@ -154,15 +154,15 @@ export default {
     }
   },
   created(){
-    this.isLoading = true
+    this.isLoading = true;
     axios.get('api/clients')
       .then(res => this.items = res.data)
       .catch(err => console.log(err))
-      .finally(() => this.isLoading = false)
+      .finally(() => this.isLoading = false);
   },
   computed: {
      maxRowsNumber() {
-      return this.items.length
+      return this.items.length;
     },
     showRemoveButton(){
       return  this.$store.getters.user.profile.access  == 'elevated' ? true : false;
@@ -177,14 +177,13 @@ export default {
       this.$router.push({
         name: 'upload-client-file',
         query: {
-          clientId: item.clientId,
-          // documentId: item.documents[0] ? item.documents[0].fileRepresentationInDatabaseId : 0,
+          clientId: item.clientId
         }
       })
     },
     fileName(document){
       if (document){
-        return  document.name ; 
+        return  document.name; 
       }           
     },   
     filePath(document){
@@ -195,12 +194,13 @@ export default {
     downloadDocument(url, name) {
        axios.get(url, {responseType: 'blob'})
         .then(( {data }) => {
-        const blob = new Blob([data], { type: 'application/pdf' })
-        let link = document.createElement('a')
-        link.href = window.URL.createObjectURL(blob)
-        link.download = name
-        link.click()})
-        .catch(err => console.log(err))
+          const blob = new Blob([data], { type: 'application/pdf' });
+          let link = document.createElement('a');
+          link.href = window.URL.createObjectURL(blob);
+          link.download = name;
+          link.click();
+        })
+        .catch(err => console.log(err));
     },
     goToTermsOfBusinessPage(item){
       this.$router.push({
@@ -211,7 +211,7 @@ export default {
           companyName: item.companyName,
           address: item.address,
         }        
-      })
+      });
     },
     showFilteredJobs(item){
       this.$router.push({
@@ -227,7 +227,8 @@ export default {
         name: 'add-client',
         query: {
           mode: 'add',
-        }});
+        }
+      });
     },
     edit(item) {
       this.$router.push({
@@ -239,10 +240,7 @@ export default {
       })
     },
     remove(item) {
-      if(confirm("Do you want to remove " + 
-              item.contactPerson + 
-              "?")){
-
+      if(confirm("Do you want to remove " + item.contactPerson + "?")){
         this.objToRemove = 'api/clients/';
         this.objToRemove += item.clientId;
         axios.delete(this.objToRemove)
@@ -251,7 +249,8 @@ export default {
         .finally( () => 
           axios.get('api/clients')
             .then(res => this.items = res.data)
-            .catch(err => console.log(err)))
+            .catch(err => console.log(err))
+        )
       }
     }
   }

@@ -18,18 +18,15 @@
       <div class="row justify-content-end">
       <b-button variant="primary" @click="addNew()">Add Candidate</b-button>
       </div>
-    </b-form-group>
-    
+    </b-form-group>    
   </div>
-
   
   <div class="midbody" v-if="isLoading" >
-    <b-spinner variant="info" label="Spinning"></b-spinner>
+    <b-spinner class="loading" label="Spinning"></b-spinner>
     <span class="loading h2"> &nbsp; Loading...     </span>
   </div>
 
   <div v-else>
-  <!-- Main table element -->
   <b-table ref="tableRef" striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter" :key="refreshTable">
     <template slot="name" scope="item">
         {{item.item.name}}
@@ -46,16 +43,6 @@
     <template slot="status" scope="item">
       {{(item.item.candidateStatus !== null) ? item.item.candidateStatus.status : null}}
     </template>
-    <!-- <template slot="job" scope="item">
-     <router-link  :to="{
-        name: 'edit-job',
-        query: {
-          loadInfoFromBackend: true,
-          jobId: item.item.job.id,
-          candidateId: item.item.candidateId,
-        }
-      }" > {{(item.item.job !== null) ? item.item.job.title : null}}</router-link>
-    </template> -->
     <template slot="job" scope="item">
       <ul>
         <li v-for="job in item.item.appliedForJobs" :key="job.candidateSentToInterviewId">
@@ -75,18 +62,7 @@
         </li>
       </ul>
       
-       <!-- <b-link :href="filePath(item)" >some</b-link> 
-      <a :href="filePath(item)" target="_blank">  
-        {{filePath(item)}}
-      </a> -->
-      <!-- <b-button @click="downloadDocument(item.item)">{{item.item.documents[0] ? item.item.documents[0].name : null}}</b-button> -->
-      
     </template>
-    
-    <!--template slot="recruiter" scope="item">
-      {{item.item.recruiter.name}}
-    </template-->
-  <!-- Column to control data.. -->
     <template slot="actions" scope="items">
       <b-button class="my-btn" variant="warning" size="sm" @click="edit(items.item)" v-if="showEditButtons(items.item)">Edit</b-button>
       <b-button class="my-btn" variant="info" size="sm" @click="uploadCv(items.item)" v-if="showEditButtons(items.item)">Upload File</b-button>
@@ -111,7 +87,6 @@ import EditCandidate from './modals/EditCandidate'
 import AddCv from './modals/AddCv'
 export default {
   name: 'app',
- /*  mode: 'production', */
   components: {
     BTable,
     BFormGroup,
@@ -149,10 +124,6 @@ export default {
         label: 'Status',
         sortable: true
       },
-   /*   recruiter: {
-        //label: 'Actions'
-        sortable: true
-      }, */
       docs: {
         label: 'Documents saved',
         sortable: true
@@ -174,7 +145,7 @@ export default {
     }
   },
   created(){
-    this.isLoading = true
+    this.isLoading = true;
     axios.get('api/candidates')
       .then(res => this.items = res.data)
       .catch(err => console.log(err))
@@ -182,10 +153,10 @@ export default {
   },
   computed: {
     maxRowsNumber() {
-      return this.items.length
+      return this.items.length;
     },
      reloadTable() {
-      return  this.refreshTable
+      return  this.refreshTable;
     },
     showRemoveButton(){
       return  this.$store.getters.user.profile.access  == 'elevated' ? true : false;
@@ -206,7 +177,7 @@ export default {
     },
     fileName(document){
       if (document){
-        return  document.name ; 
+        return  document.name; 
       }           
     },   
     filePath(document){
@@ -217,19 +188,19 @@ export default {
     downloadDocument(url, name) {
        axios.get(url, {responseType: 'blob'})
         .then(( {data }) => {
-        const blob = new Blob([data], { type: 'application/pdf' })
-        let link = document.createElement('a')
-        link.href = window.URL.createObjectURL(blob)
-        link.download = name
-        link.click()})
-        .catch(err => console.log(err))
+          const blob = new Blob([data], { type: 'application/pdf' });
+          let link = document.createElement('a');
+          link.href = window.URL.createObjectURL(blob);
+          link.download = name;
+          link.click();
+        })
+        .catch(err => console.log(err));
     },
     uploadCv(item){
       this.$router.push({
         name: 'upload-cv',
         query: {
           candidateId: item.candidateId,
-          // documentId: item.documents[0] ? item.documents[0].fileRepresentationInDatabaseId : 0,          
         }
       })
     },
@@ -255,7 +226,6 @@ export default {
     },
     remove(item) {
       if(confirm("Do you want to remove " + item.name + "?")){
-
         this.objToRemove = 'api/candidates/';
         this.objToRemove += item.candidateId;
         axios.delete(this.objToRemove)
@@ -264,7 +234,8 @@ export default {
         .finally( () => 
           axios.get('api/candidates')
           .then(res => this.items = res.data)
-          .catch(err => console.log(err)))
+          .catch(err => console.log(err))
+        );
       }
     },
     

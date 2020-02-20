@@ -1,7 +1,7 @@
 <template>
 <div>
 <div class="midbody" v-if="isLoading" >
-  <b-spinner variant="info" label="Spinning"></b-spinner>
+  <b-spinner class="loading" label="Spinning"></b-spinner>
   <span class="loading h2"> &nbsp; Loading...     </span>
 </div>
 
@@ -38,9 +38,6 @@
       <b-col sm="9">
         <multiselect disabled track-by="clientId" label="companyNcontact" v-model="chosenClient" :options="clients"></multiselect>
       </b-col>
-       <!-- <b-col sm="9">
-        <b-form-input disabled v-model="chosenClient.name"></b-form-input>
-      </b-col> -->
     </b-row>    
     <b-row class="my-3">
       <b-col sm="3">
@@ -54,12 +51,6 @@
       <b-col sm="3">
         <label>Date: </label>
       </b-col>
-      <!-- <b-col sm="3">
-        <b-form-select v-model="day" :options="dayOptions" ></b-form-select>
-      </b-col>
-      <b-col sm="3">
-        <b-form-select v-model="month" :options="monthOptions" ></b-form-select>
-      </b-col> -->
       <b-col sm="3">
         <b-form-input id="input-live-feedback" type="date"  v-model="date" :state="readyToGenerate" ></b-form-input>
         <b-form-invalid-feedback id="input-live-feedback">
@@ -76,7 +67,6 @@
     </b-button>
     <b-button class="my-btn" size="lg" id="close" @click="close">Close</b-button>
     </div>
-  <!-- </b-modal> :disabled="!requirementsOK"-->
     </div>
 </div>
 </div>
@@ -123,12 +113,8 @@ import 'jspdf-autotable';
 import { Document, Packer, Paragraph, TextRun, Table, TableRow, TableCell, HeadingLevel, AlignmentType, WidthType, TableLayoutType, ShadingType} from 'docx';
 import { saveAs } from 'file-saver';
 
-  // register globally
- // Vue.component('multiselect', Multiselect)
-
 export default {
   name: 'generatereport',
- /*  mode: 'production', */
   components: {
     BRow, BCol,
     BButton,
@@ -136,918 +122,878 @@ export default {
     Multiselect
   },
   computed: {
-    // choseJobAndChangeOtherProperties(){
-      
-    // },
-    // requirementsOK() {
-    //   return this.title.length > 0 ? true : false
-    // },
-    // compContactPerson() {
-    //   return (this.chosenClient ? this.chosenClient.contactPerson : "");
-    // },
-    // clientsTransformedList() {
-    //   return this.clientsCombo
-    // }
     readyToGenerate(){
-      return (this.date == null) ? false : true
+      return (this.date == null) ? false : true;
     },
     isLoading(){
-        return this.recruitersAreLoading || this.clientsAreLoading
+        return this.recruitersAreLoading || this.clientsAreLoading;
     },
   },
   methods: {
     formatDate(){
       if (this.date == null)
       {
-        return ' '
+        return ' ';
       }else{
         var res = this.date.split("-");
-        return res[2] + '.' + res[1] + '.' + res[0]
+        return res[2] + '.' + res[1] + '.' + res[0];
       }       
     },
     close() {
-      this.$router.go(-1)
+      this.$router.go(-1);
     },
     add() {
-      this.isGenerating = true 
-
+      this.isGenerating = true;
       const doc = new Document();
 
       // Documents contain sections, you can have multiple sections per document, go here to learn more about sections
       // This simple example will only contain one section
       doc.addSection({
-          children: [
-            new Paragraph({
-              spacing: {
-                before: 500,
-              },
-              //heading: HeadingLevel.Title,
-              alignment: AlignmentType.CENTER,
-              children: [
-                  new TextRun({
-                    text: "Confidential Candidate Report",
-                    allCaps: true,
-                    size: 60,
-                  }),
-              ],
-            }),
-            new Paragraph({
-              spacing: {
-                before: 2000,
-              },
-              alignment: AlignmentType.CENTER,
-              children: [
-                  new TextRun({
-                    text: this.candidateName,
-                    //color: "FF5733",  
-                    size: this.standardSize,
-                  }),
-              ],
-            }),
-            new Paragraph({
-              spacing: {
-                before: 1000,
-              },
-              alignment: AlignmentType.CENTER,
-              children: [
-                  new TextRun({
-                    text: "for",
-                    font: "Times",
-                    size: this.standardSize,
-                  }),
-              ],
-            }),
-            new Paragraph({
-              spacing: {
-                before: 1000,
-              },
-              alignment: AlignmentType.CENTER,
-              children: [
-                  new TextRun({
-                    text: this.chosenClient ? this.chosenClient.companyName : '',
-                    //color: "FF5733",
-                    size: this.standardSize,
-                  }),
-              ],
-            }),
-            new Paragraph({
-              spacing: {
-                before: 1000,
-              },
-              alignment: AlignmentType.CENTER,
-              children: [
-                  new TextRun({
-                    text: "as",
-                    size: this.standardSize,
-                  }),
-              ],
-            }),
-            new Paragraph({
-              spacing: {
-                before: 1000,
-              },
-              alignment: AlignmentType.CENTER,
-              children: [
-                  new TextRun({
-                    text: this.chosenJob ? this.chosenJob.title : '',
-                    //color: "FF5733",
-                    size: this.standardSize,
-                  }),
-              ],
-            }),
-            new Paragraph({
-              spacing: {
-                before: 2500,
-              },
-              alignment: AlignmentType.LEFT,              
-              children: [
-                  new TextRun({
-                    text: "Prepared by: " + (this.chosenRecruiter ? this.chosenRecruiter.name : ''),
-                    size: this.standardSize,
-                  }).break(),
-                  // new TextRun({
-                  //   text: "  ",
-                  //   size: this.standardSize,
-                  // }).break(),
-                  new TextRun({
-                    text: "Date: " + this.formatDate(),
-                    size: this.standardSize,
-                  }).break(),
-                  // new TextRun({
-                  //   text: "   ",
-                  //   size: this.standardSize,
-                  // }),
-                  new TextRun({
-                    text: "Contact Number: " + (this.chosenRecruiter ? this.chosenRecruiter.phone : ''),
-                    size: this.standardSize,
-                  }).break(),
-                  // new TextRun({
-                  //   text: "   ",
-                  //   size: this.standardSize,
-                  // }),
-                  new TextRun({
-                    text: "Email Address: " + (this.chosenRecruiter ? this.chosenRecruiter.email : ''),
-                    size: this.standardSize,
-                  }).break(),
-                  // new TextRun({
-                  //   text: "   ",
-                  //   size: this.standardSize,
-                  // }),
-              ],               
-            }),
-          ],
+        children: [
+          new Paragraph({
+            spacing: {
+              before: 500,
+            },
+            //heading: HeadingLevel.Title,
+            alignment: AlignmentType.CENTER,
+            children: [
+              new TextRun({
+                text: "Confidential Candidate Report",
+                allCaps: true,
+                size: 60,
+              }),
+            ],
+          }),
+          new Paragraph({
+            spacing: {
+              before: 2000,
+            },
+            alignment: AlignmentType.CENTER,
+            children: [
+              new TextRun({
+                text: this.candidateName,
+                //color: "FF5733",  
+                size: this.standardSize,
+              }),
+            ],
+          }),
+          new Paragraph({
+            spacing: {
+              before: 1000,
+            },
+            alignment: AlignmentType.CENTER,
+            children: [
+              new TextRun({
+                text: "for",
+                font: "Times",
+                size: this.standardSize,
+              }),
+            ],
+          }),
+          new Paragraph({
+            spacing: {
+              before: 1000,
+            },
+            alignment: AlignmentType.CENTER,
+            children: [
+              new TextRun({
+                text: this.chosenClient ? this.chosenClient.companyName : '',
+                //color: "FF5733",
+                size: this.standardSize,
+              }),
+            ],
+          }),
+          new Paragraph({
+            spacing: {
+              before: 1000,
+            },
+            alignment: AlignmentType.CENTER,
+            children: [
+              new TextRun({
+                text: "as",
+                size: this.standardSize,
+              }),
+            ],
+          }),
+          new Paragraph({
+            spacing: {
+              before: 1000,
+            },
+            alignment: AlignmentType.CENTER,
+            children: [
+              new TextRun({
+                text: this.chosenJob ? this.chosenJob.title : '',
+                //color: "FF5733",
+                size: this.standardSize,
+              }),
+            ],
+          }),
+          new Paragraph({
+            spacing: {
+              before: 2500,
+            },
+            alignment: AlignmentType.LEFT,              
+            children: [
+              new TextRun({
+                text: "Prepared by: " + (this.chosenRecruiter ? this.chosenRecruiter.name : ''),
+                size: this.standardSize,
+              }).break(),
+              new TextRun({
+                text: "Date: " + this.formatDate(),
+                size: this.standardSize,
+              }).break(),             
+              new TextRun({
+                text: "Contact Number: " + (this.chosenRecruiter ? this.chosenRecruiter.phone : ''),
+                size: this.standardSize,
+              }).break(),
+              new TextRun({
+                text: "Email Address: " + (this.chosenRecruiter ? this.chosenRecruiter.email : ''),
+                size: this.standardSize,
+              }).break(),
+            ],               
+          }),
+        ],
       });
 
 
       // Documents contain sections, you can have multiple sections per document, go here to learn more about sections
       // This simple example will only contain one section
       doc.addSection({
-          properties: {},
-          children: [
-              new Paragraph({
-                spacing: {
-                  after: 300,
-                },
+        properties: {},
+        children: [
+          new Paragraph({
+            spacing: {
+              after: 300,
+            },
+            children: [
+              new TextRun({text: "Candidate Details", size: 36})                      
+            ],
+          }),
+          new Table({
+            width: {
+                size: 5000,
+                type: WidthType.DXA,
+            },
+            columnWidths: [30, 70],
+            widthUnitType: WidthType.PERCENTAGE,
+            layout: TableLayoutType.FIXED,
+            rows: [
+              new TableRow({
                 children: [
-                    new TextRun({text: "Candidate Details", size: 36})                      
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [new Paragraph("Candidate Profile:")],
+                  }),
                 ],
               }),
-              new Table({
-                width: {
-                    size: 5000,
-                    type: WidthType.DXA,
-                },
-                columnWidths: [30, 70],
-                widthUnitType: WidthType.PERCENTAGE,
-                layout: TableLayoutType.FIXED,
-                rows: [
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [new Paragraph("Candidate Profile:")],
-                      }),
-                    ],
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    shading: {fill: this.tableFill},
+                    children: [new Paragraph("Name")],
                   }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        shading: {fill: this.tableFill},
-                        children: [new Paragraph("Name")],
-                      }),
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [],
-                      }),
-                    ],
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [],
                   }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        shading: {fill: this.tableFill},
-                        children: [new Paragraph("Nationality")],
-                      }),
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [],
-                      }),
-                    ],
-                  }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        shading: {fill: this.tableFill},
-                        children: [new Paragraph("Date of Birth")],
-                      }),
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [],
-                      }),
-                    ],
-                  }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        shading: {fill: this.tableFill},
-                        children: [new Paragraph("Age")],
-                      }),
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [],
-                      }),
-                    ],
-                  }),
-                ]
+                ],
               }),
-              new Paragraph({
-                children: [],
-              }),
-              new Table({
-                width: {
-                    size: 5000,
-                    type: WidthType.DXA,
-                },
-                columnWidths: [30, 70],
-                widthUnitType: WidthType.PERCENTAGE,
-                layout: TableLayoutType.FIXED,
-                rows: [
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [new Paragraph("Education:")],
-                      }),
-                    ],
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    shading: {fill: this.tableFill},
+                    children: [new Paragraph("Nationality")],
                   }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        shading: {fill: this.tableFill},
-                        children: [new Paragraph("Year")],
-                      }),
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [new Paragraph("University")],
-                      }),
-                    ],
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [],
                   }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        shading: {fill: this.tableFill},
-                        children: [new Paragraph("Year")],
-                      }),
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [],
-                      }),
-                    ],
-                  }),                  
-                ]
+                ],
               }),
-              new Paragraph({
-                children: [],
-              }),
-              new Table({
-                width: {
-                    size: 5000,
-                    type: WidthType.DXA,
-                },
-                columnWidths: [30, 70],
-                widthUnitType: WidthType.PERCENTAGE,
-                layout: TableLayoutType.FIXED,
-                rows: [
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [new Paragraph("Software Skill:")],
-                      }),
-                    ],
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    shading: {fill: this.tableFill},
+                    children: [new Paragraph("Date of Birth")],
                   }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        shading: {fill: this.tableFill},
-                        children: [],
-                      }),
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [],
-                      }),
-                    ],
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [],
                   }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        shading: {fill: this.tableFill},
-                        children: [],
-                      }),
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [],
-                      }),
-                    ],
-                  }),                 
-                ]
+                ],
               }),
-              new Paragraph({
-                children: [],
-              }),
-              new Table({
-                width: {
-                    size: 5000,
-                    type: WidthType.DXA,
-                },
-                columnWidths: [30, 70],
-                widthUnitType: WidthType.PERCENTAGE,
-                layout: TableLayoutType.FIXED,
-                rows: [
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [new Paragraph("Certificate:")],
-                      }),
-                    ],
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    shading: {fill: this.tableFill},
+                    children: [new Paragraph("Age")],
                   }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        shading: {fill: this.tableFill},
-                        children: [new Paragraph("Year")],
-                      }),
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [],
-                      }),
-                    ],
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [],
                   }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        shading: {fill: this.tableFill},
-                        children: [new Paragraph("Year")],
-                      }),
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [],
-                      }),
-                    ],
-                  }),                 
-                ]
+                ],
               }),
-              new Paragraph({
-                children: [],
-              }),
-              new Table({
-                width: {
-                    size: 5000,
-                    type: WidthType.DXA,
-                },
-                columnWidths: [30, 70],
-                widthUnitType: WidthType.PERCENTAGE,
-                layout: TableLayoutType.FIXED,
-                rows: [
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [new Paragraph("Remuneration:")],
-                      }),
-                    ],
+            ]
+          }),
+          new Paragraph({
+            children: [],
+          }),
+          new Table({
+            width: {
+                size: 5000,
+                type: WidthType.DXA,
+            },
+            columnWidths: [30, 70],
+            widthUnitType: WidthType.PERCENTAGE,
+            layout: TableLayoutType.FIXED,
+            rows: [
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [new Paragraph("Education:")],
                   }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        shading: {fill: this.tableFill},
-                        children: [new Paragraph("Current Basic Salary")],
-                      }),
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [new Paragraph("THB")],
-                      }),
-                    ],
-                  }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        shading: {fill: this.tableFill},
-                        children: [new Paragraph("Expected Salary")],
-                      }),
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [new Paragraph("THB")],
-                      }),
-                    ],
-                  }),  
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        shading: {fill: this.tableFill},
-                        children: [new Paragraph("Notice Period")],
-                      }),
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [new Paragraph("Month")],
-                      }),
-                    ],
-                  }),                 
-                ]
+                ],
               }),
-          ],
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    shading: {fill: this.tableFill},
+                    children: [new Paragraph("Year")],
+                  }),
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [new Paragraph("University")],
+                  }),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    shading: {fill: this.tableFill},
+                    children: [new Paragraph("Year")],
+                  }),
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [],
+                  }),
+                ],
+              }),                  
+            ]
+          }),
+          new Paragraph({
+            children: [],
+          }),
+          new Table({
+            width: {
+                size: 5000,
+                type: WidthType.DXA,
+            },
+            columnWidths: [30, 70],
+            widthUnitType: WidthType.PERCENTAGE,
+            layout: TableLayoutType.FIXED,
+            rows: [
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [new Paragraph("Software Skill:")],
+                  }),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    shading: {fill: this.tableFill},
+                    children: [],
+                  }),
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [],
+                  }),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    shading: {fill: this.tableFill},
+                    children: [],
+                  }),
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [],
+                  }),
+                ],
+              }),                 
+            ]
+          }),
+          new Paragraph({
+            children: [],
+          }),
+          new Table({
+            width: {
+                size: 5000,
+                type: WidthType.DXA,
+            },
+            columnWidths: [30, 70],
+            widthUnitType: WidthType.PERCENTAGE,
+            layout: TableLayoutType.FIXED,
+            rows: [
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [new Paragraph("Certificate:")],
+                  }),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    shading: {fill: this.tableFill},
+                    children: [new Paragraph("Year")],
+                  }),
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [],
+                  }),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    shading: {fill: this.tableFill},
+                    children: [new Paragraph("Year")],
+                  }),
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [],
+                  }),
+                ],
+              }),                 
+            ]
+          }),
+          new Paragraph({
+            children: [],
+          }),
+          new Table({
+            width: {
+                size: 5000,
+                type: WidthType.DXA,
+            },
+            columnWidths: [30, 70],
+            widthUnitType: WidthType.PERCENTAGE,
+            layout: TableLayoutType.FIXED,
+            rows: [
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [new Paragraph("Remuneration:")],
+                  }),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    shading: {fill: this.tableFill},
+                    children: [new Paragraph("Current Basic Salary")],
+                  }),
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [new Paragraph("THB")],
+                  }),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    shading: {fill: this.tableFill},
+                    children: [new Paragraph("Expected Salary")],
+                  }),
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [new Paragraph("THB")],
+                  }),
+                ],
+              }),  
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    shading: {fill: this.tableFill},
+                    children: [new Paragraph("Notice Period")],
+                  }),
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [new Paragraph("Month")],
+                  }),
+                ],
+              }),                 
+            ]
+          }),
+        ],
       });
 
       doc.addSection({
-          properties: {},
-          children: [
-              new Paragraph({
-                spacing: {
-                  after: 300,
-                },
+        properties: {},
+        children: [
+          new Paragraph({
+            spacing: {
+              after: 300,
+            },
+            children: [
+              new TextRun({text: "Professional Experience", size: 36})                      
+            ],
+          }),
+          new Table({
+            width: {
+              size: 5000,
+              type: WidthType.DXA,
+            },
+            columnWidths: [50, 50],
+            widthUnitType: WidthType.PERCENTAGE,
+            layout: TableLayoutType.FIXED,
+            rows: [
+              new TableRow({
                 children: [
-                    new TextRun({text: "Professional Experience", size: 36})                      
-                ],
-              }),
-              new Table({
-                width: {
-                    size: 5000,
-                    type: WidthType.DXA,
-                },
-                columnWidths: [50, 50],
-                widthUnitType: WidthType.PERCENTAGE,
-                layout: TableLayoutType.FIXED,
-                rows: [
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [new Paragraph("Work Experience")],
-                      }),
-                    ],
-                  }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        shading: {fill: this.tableFill},
-                        children: [new Paragraph("Month Year - Month Year")],
-                      }),
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [new Paragraph({children:[new TextRun({text: "Company Name", bold: true,})]})],
-                      }),
-                    ],
-                  }),                  
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        shading: {fill: this.tableFill},
-                        children: [],
-                      }),
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [new Paragraph("Position")],
-                      }),
-                    ],
-                  }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        shading: {fill: this.tableFill},
-                        children: [new Paragraph("Job Responsibilities")],
-                      }),
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [],
-                      }),
-                    ],
-                  }),
-                ]
-              }),
-              new Paragraph({
-                children: [],
-              }),   //////////////////////////////           
-              new Table({
-                width: {
-                    size: 5000,
-                    type: WidthType.DXA,
-                },
-                columnWidths: [50, 50],
-                widthUnitType: WidthType.PERCENTAGE,
-                layout: TableLayoutType.FIXED,
-                rows: [                 
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        shading: {fill: this.tableFill},
-                        children: [new Paragraph("Month Year - Month Year")],
-                      }),
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [new Paragraph({children:[new TextRun({text: "Company Name", bold: true,})]})],
-                      }),
-                    ],
-                  }),                  
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        shading: {fill: this.tableFill},
-                        children: [],
-                      }),
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [new Paragraph("Position")],
-                      }),
-                    ],
-                  }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        shading: {fill: this.tableFill},
-                        children: [new Paragraph("Job Responsibilities")],
-                      }),
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [],
-                      }),
-                    ],
-                  }),
-                ]
-              }),
-              new Paragraph({
-                children: [],
-              }),
-              new Table({
-                width: {
-                    size: 5000,
-                    type: WidthType.DXA,
-                },
-                columnWidths: [50, 50],
-                widthUnitType: WidthType.PERCENTAGE,
-                layout: TableLayoutType.FIXED,
-                rows: [                 
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        shading: {fill: this.tableFill},
-                        children: [new Paragraph("Month Year - Month Year")],
-                      }),
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [new Paragraph({children:[new TextRun({text: "Company Name", bold: true,})]})],
-                      }),
-                    ],
-                  }),                  
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        shading: {fill: this.tableFill},
-                        children: [],
-                      }),
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [new Paragraph("Position")],
-                      }),
-                    ],
-                  }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        shading: {fill: this.tableFill},
-                        children: [new Paragraph("Job Responsibilities")],
-                      }),
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [],
-                      }),
-                    ],
-                  }),
-                ]
-              }),
-              new Paragraph({
-                children: [],
-              }),  //////////////////////
-              new Table({
-                width: {
-                    size: 5000,
-                    type: WidthType.DXA,
-                },
-                columnWidths: [50, 50],
-                widthUnitType: WidthType.PERCENTAGE,
-                layout: TableLayoutType.FIXED,
-                rows: [                 
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        shading: {fill: this.tableFill},
-                        children: [new Paragraph("Month Year - Month Year")],
-                      }),
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [new Paragraph({children:[new TextRun({text: "Company Name", bold: true,})]})],
-                      }),
-                    ],
-                  }),                  
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        shading: {fill: this.tableFill},
-                        children: [],
-                      }),
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [new Paragraph("Position")],
-                      }),
-                    ],
-                  }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        shading: {fill: this.tableFill},
-                        children: [new Paragraph("Job Responsibilities")],
-                      }),
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [],
-                      }),
-                    ],
-                  }),
-                ]
-              }),
-              new Paragraph({
-                children: [],
-              }),
-              new Table({
-                width: {
-                    size: 5000,
-                    type: WidthType.DXA,
-                },
-                columnWidths: [50, 50],
-                widthUnitType: WidthType.PERCENTAGE,
-                layout: TableLayoutType.FIXED,
-                rows: [                 
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        shading: {fill: this.tableFill},
-                        children: [new Paragraph("Month Year - Month Year")],
-                      }),
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [new Paragraph({children:[new TextRun({text: "Company Name", bold: true,})]})],
-                      }),
-                    ],
-                  }),                  
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        shading: {fill: this.tableFill},
-                        children: [],
-                      }),
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [new Paragraph("Position")],
-                      }),
-                    ],
-                  }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        shading: {fill: this.tableFill},
-                        children: [new Paragraph("Job Responsibilities")],
-                      }),
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [],
-                      }),
-                    ],
-                  }),
-                ]
-              }),
-              new Paragraph({
-                children: [],
-              }),
-              new Table({
-                width: {
-                    size: 5000,
-                    type: WidthType.DXA,
-                },
-                columnWidths: [50, 50],
-                widthUnitType: WidthType.PERCENTAGE,
-                layout: TableLayoutType.FIXED,
-                rows: [                 
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        shading: {fill: this.tableFill},
-                        children: [new Paragraph("Month Year - Month Year")],
-                      }),
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [new Paragraph({children:[new TextRun({text: "Company Name", bold: true,})]})],
-                      }),
-                    ],
-                  }),                  
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        shading: {fill: this.tableFill},
-                        children: [],
-                      }),
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [new Paragraph("Position")],
-                      }),
-                    ],
-                  }),
-                  new TableRow({
-                    children: [
-                      new TableCell({
-                        margins: { left: this.leftTableMargin},
-                        children: [new Paragraph("Job Responsibilities")]
-                      }),
-                      new TableCell({
-                        margins: {left: this.leftTableMargin},
-                        children: [],
-                      }),
-                    ],
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [new Paragraph("Work Experience")],
                   }),
                 ],
               }),
-              new Paragraph({
-                indent: {
-                  firstLine: 1300,
-                  // start: 1300,
-                },
-                spacing: {
-                  before: 1000,
-                },
+              new TableRow({
                 children: [
-                  new TextRun({
-                    text: "    Please Note:",
-                    allCaps: true,
-                    // size: 26,                    
-                  }).break(),
-                  new TextRun({
-                    text: "    This confidential report is based on information provided by the candidate and has been prepared for the exclusive\n" + 
-                          "use of the client to whom it is addressed. Leap International Co., Ltd will not accept whatever liability for any\n" + 
-                          "misrepresentation by the candidate or their referees. At this stage reference checks have not been conducted.\n" + 
-                          "We will conduct formal reference checks prior the extension of an offer.\n"                           
-                  }).break(),
-                  new TextRun({
-                    text: "    In order to preserve confidentiality, we request that no communication be entered into with candidate's present or\n" + 
-                          "previous employers without the express permission of the applicant or Leap International Co., Ltd.\n" + 
-                          "Any contact with " + this.candidateName + " is to be made via Leap International Co., Ltd.\n" + 
-                          "Should this introduction lead to employment of the candidate on contract or permanent basis, our standard terms of\n" + 
-                          "business and fee structure will apply. For further information or to arrange meetings, please contact the undersigned.",
-                  }).break(),                  
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    shading: {fill: this.tableFill},
+                    children: [new Paragraph("Month Year - Month Year")],
+                  }),
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [new Paragraph({children:[new TextRun({text: "Company Name", bold: true,})]})],
+                  }),
                 ],
-              }),
-               
-              new Paragraph({
-                spacing: {
-                  before: 700, 
-                },
+              }),                  
+              new TableRow({
                 children: [
-                  new TextRun({
-                    text: "        Leap International Co., Ltd.",
-                  }).break(),
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    shading: {fill: this.tableFill},
+                    children: [],
+                  }),
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [new Paragraph("Position")],
+                  }),
                 ],
               }),
-              new Paragraph({
-                spacing: {
-                  before: 300, 
-                },
+              new TableRow({
                 children: [
-                  new TextRun({
-                    text: "                (Jen Ong)",
-                  }).break(),
-                  new TextRun({
-                    text: "       Position: Director of Leap International Co., Ltd.",
-                  }).break(),
-                  new TextRun({
-                    text: "       Date: " + this.formatDate(),
-                  }).break(),
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    shading: {fill: this.tableFill},
+                    children: [new Paragraph("Job Responsibilities")],
+                  }),
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [],
+                  }),
                 ],
               }),
-          ]
+            ]
+          }),
+          new Paragraph({
+            children: [],
+          }),             
+          new Table({
+            width: {
+                size: 5000,
+                type: WidthType.DXA,
+            },
+            columnWidths: [50, 50],
+            widthUnitType: WidthType.PERCENTAGE,
+            layout: TableLayoutType.FIXED,
+            rows: [                 
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    shading: {fill: this.tableFill},
+                    children: [new Paragraph("Month Year - Month Year")],
+                  }),
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [new Paragraph({children:[new TextRun({text: "Company Name", bold: true,})]})],
+                  }),
+                ],
+              }),                  
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    shading: {fill: this.tableFill},
+                    children: [],
+                  }),
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [new Paragraph("Position")],
+                  }),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    shading: {fill: this.tableFill},
+                    children: [new Paragraph("Job Responsibilities")],
+                  }),
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [],
+                  }),
+                ],
+              }),
+            ]
+          }),
+          new Paragraph({
+            children: [],
+          }),
+          new Table({
+            width: {
+                size: 5000,
+                type: WidthType.DXA,
+            },
+            columnWidths: [50, 50],
+            widthUnitType: WidthType.PERCENTAGE,
+            layout: TableLayoutType.FIXED,
+            rows: [                 
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    shading: {fill: this.tableFill},
+                    children: [new Paragraph("Month Year - Month Year")],
+                  }),
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [new Paragraph({children:[new TextRun({text: "Company Name", bold: true,})]})],
+                  }),
+                ],
+              }),                  
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    shading: {fill: this.tableFill},
+                    children: [],
+                  }),
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [new Paragraph("Position")],
+                  }),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    shading: {fill: this.tableFill},
+                    children: [new Paragraph("Job Responsibilities")],
+                  }),
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [],
+                  }),
+                ],
+              }),
+            ]
+          }),
+          new Paragraph({
+            children: [],
+          }),  
+          new Table({
+            width: {
+                size: 5000,
+                type: WidthType.DXA,
+            },
+            columnWidths: [50, 50],
+            widthUnitType: WidthType.PERCENTAGE,
+            layout: TableLayoutType.FIXED,
+            rows: [                 
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    shading: {fill: this.tableFill},
+                    children: [new Paragraph("Month Year - Month Year")],
+                  }),
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [new Paragraph({children:[new TextRun({text: "Company Name", bold: true,})]})],
+                  }),
+                ],
+              }),                  
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    shading: {fill: this.tableFill},
+                    children: [],
+                  }),
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [new Paragraph("Position")],
+                  }),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    shading: {fill: this.tableFill},
+                    children: [new Paragraph("Job Responsibilities")],
+                  }),
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [],
+                  }),
+                ],
+              }),
+            ]
+          }),
+          new Paragraph({
+            children: [],
+          }),
+          new Table({
+            width: {
+                size: 5000,
+                type: WidthType.DXA,
+            },
+            columnWidths: [50, 50],
+            widthUnitType: WidthType.PERCENTAGE,
+            layout: TableLayoutType.FIXED,
+            rows: [                 
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    shading: {fill: this.tableFill},
+                    children: [new Paragraph("Month Year - Month Year")],
+                  }),
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [new Paragraph({children:[new TextRun({text: "Company Name", bold: true,})]})],
+                  }),
+                ],
+              }),                  
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    shading: {fill: this.tableFill},
+                    children: [],
+                  }),
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [new Paragraph("Position")],
+                  }),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    shading: {fill: this.tableFill},
+                    children: [new Paragraph("Job Responsibilities")],
+                  }),
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [],
+                  }),
+                ],
+              }),
+            ]
+          }),
+          new Paragraph({
+            children: [],
+          }),
+          new Table({
+            width: {
+                size: 5000,
+                type: WidthType.DXA,
+            },
+            columnWidths: [50, 50],
+            widthUnitType: WidthType.PERCENTAGE,
+            layout: TableLayoutType.FIXED,
+            rows: [                 
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    shading: {fill: this.tableFill},
+                    children: [new Paragraph("Month Year - Month Year")],
+                  }),
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [new Paragraph({children:[new TextRun({text: "Company Name", bold: true,})]})],
+                  }),
+                ],
+              }),                  
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    shading: {fill: this.tableFill},
+                    children: [],
+                  }),
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [new Paragraph("Position")],
+                  }),
+                ],
+              }),
+              new TableRow({
+                children: [
+                  new TableCell({
+                    margins: { left: this.leftTableMargin},
+                    children: [new Paragraph("Job Responsibilities")]
+                  }),
+                  new TableCell({
+                    margins: {left: this.leftTableMargin},
+                    children: [],
+                  }),
+                ],
+              }),
+            ],
+          }),
+          new Paragraph({
+            indent: {
+              firstLine: 1300,
+              // start: 1300,
+            },
+            spacing: {
+              before: 1000,
+            },
+            children: [
+              new TextRun({
+                text: "    Please Note:",
+                allCaps: true,
+                // size: 26,                    
+              }).break(),
+              new TextRun({
+                text: "    This is an example report for the candidate  " + this.candidateName + ".\n"                           
+              }).break(),               
+            ],
+          }),            
+          new Paragraph({
+            spacing: {
+              before: 700, 
+            },
+            children: [
+              new TextRun({
+                text: "        Company 1.",
+              }).break(),
+            ],
+          }),
+          new Paragraph({
+            spacing: {
+              before: 300, 
+            },
+            children: [
+              new TextRun({
+                text: "                (Tom Jones)",
+              }).break(),
+              new TextRun({
+                text: "       Position: Director of Company 1.",
+              }).break(),
+              new TextRun({
+                text: "       Date: " + this.formatDate(),
+              }).break(),
+            ],
+          }),
+        ]
       })
       // Used to export the file into a .docx file
       Packer.toBlob(doc).then((blob) => {
-           saveAs(blob, "example.docx")
+           saveAs(blob, "Report.docx");
       });
-      this.$router.go(-1)
+      this.$router.go(-1);
     },
   },
   watch: {
     // whenever question changes, this function will run
     chosenJob: function () {
       if (this.chosenJob.client){
-        this.chosenClient = this.clients.find(cl => cl.clientId === this.chosenJob.client.id)
+        this.chosenClient = this.clients.find(cl => cl.clientId === this.chosenJob.client.id);
       }
       if (this.chosenJob.recruiter){
-        this.chosenRecruiter = this.recruiters.find(r => r.recruiterId === this.chosenJob.recruiter.id)
+        this.chosenRecruiter = this.recruiters.find(r => r.recruiterId === this.chosenJob.recruiter.id);
       }
     }
   },  
   created(){
     //this.isLoading = true 
-    this.recruitersAreLoading = true
-    this.clientsAreLoading = true
+    this.recruitersAreLoading = true;
+    this.clientsAreLoading = true;
     if (this.$route.query.candidateName){
-      this.candidateName = this.$route.query.candidateName
+      this.candidateName = this.$route.query.candidateName;
     } 
     axios.get('api/jobs')
     .then(res => {
-        this.jobs = res.data
-        var x;
-        for (x in this.jobs) {          
-            this.jobs[x].jobNid = this.jobs[x].title + " (id: " + this.jobs[x].jobId + ")"            
-        }
-        this.chosenJob = this.jobs[0]})
+      this.jobs = res.data;
+      var x;
+      for (x in this.jobs) {          
+          this.jobs[x].jobNid = this.jobs[x].title + " (id: " + this.jobs[x].jobId + ")";          
+      }
+      this.chosenJob = this.jobs[0];
+    })
     .catch(err => console.log(err))
-    .finally(() => this.clientsAreLoading = false)
+    .finally(() => this.clientsAreLoading = false);
 
     axios.get('api/clients')
     .then(res => {
-        this.clients = res.data
+        this.clients = res.data;
         var x;
         for (x in this.clients) {          
-            this.clients[x].companyNcontact = this.clients[x].companyName + " (" + this.clients[x].contactPerson + ")"            
+            this.clients[x].companyNcontact = this.clients[x].companyName + " (" + this.clients[x].contactPerson + ")";           
         }
-        this.chosenClient = this.clients[0]})
+        this.chosenClient = this.clients[0];
+    })
     .catch(err => console.log(err))
-    .finally(() => this.clientsAreLoading = false)
+    .finally(() => this.clientsAreLoading = false);
 
 
     axios.get('api/recruiters')
     .then(res => {
-        this.recruiters = res.data
-        this.chosenRecruiter = this.recruiters[0]})
+        this.recruiters = res.data;
+        this.chosenRecruiter = this.recruiters[0];
+    })
     .catch(err => console.log(err))
-    .finally(() => this.recruitersAreLoading = false)
+    .finally(() => this.recruitersAreLoading = false);
   },
   data() {
     return {
       candidateName: '',
-      //clientId: 0,
       clients: [],
       clientsCombo: [],
       chosenClient : null,
-      //recruiterId: 0,
       recruiters: [],
       chosenRecruiter : null,
-      //isLoading: false,
       recruitersAreLoading: false,
       clientsAreLoading: false,
       isGenerating: false,
@@ -1058,13 +1004,6 @@ export default {
       standardSize: 24,
       tableFill: "dedede",
       leftTableMargin: 70,
-      // dayOptions: [
-      //   {value: 'day', text: 'day'},
-      //   {value: '1', text: '1'},
-      // ],
-      // day: '',
-      // month: '',
-      // year: '',  
     }
   }
 }
@@ -1089,7 +1028,7 @@ fieldset[disabled] .multiselect{pointer-events:none}.multiselect__spinner{positi
 }
 
 .loading{
-  color: #17a2b8;
+  color: #9CC925;
   font-weight: bold;
 }
 </style>

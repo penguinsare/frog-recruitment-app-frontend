@@ -1,19 +1,16 @@
 <template>
 <div>
   <div class="midbody" v-if="isLoading" >
-    <b-spinner variant="info" label="Spinning"></b-spinner>
+    <b-spinner class="loading" label="Spinning"></b-spinner>
     <span class="loading h2"> &nbsp; Loading...     </span>
   </div>
-
 
 <div v-else>
   <div class="container">
       <br>
         <div >
         <h2>Add Placement</h2>
-      </div>
-
-       
+      </div> 
     </div>
     <div class="container"><hr><br></div>
   
@@ -66,7 +63,6 @@
       <b-spinner type="grow" variant="light" small v-if="isUploading"></b-spinner>Save
     </b-button>
     <b-button class="my-btn" id="close" @click="close" size="lg">Close</b-button>
-  <!-- </b-modal> -->
     </div>
   </div>
 </div>
@@ -78,12 +74,8 @@ import {BRow, BCol, BButton, BDropdown} from 'bootstrap-vue';
 import axios from 'axios';
 import Multiselect from 'vue-multiselect'
 
-  // register globally
- // Vue.component('multiselect', Multiselect)
-
 export default {
   name: 'addplacement',
- /*  mode: 'production', */
   components: {
     BRow, BCol,
     BButton,
@@ -92,19 +84,19 @@ export default {
   },
   computed: {
     requirementsOK() {
-      return this.title.length > 0 ? true : false
+      return this.title.length > 0 ? true : false;
     },
     compContactPerson() {
       return (this.chosenClient ? this.chosenClient.contactPerson : "");
     },
     clientsTransformedList() {
-      return this.clientsCombo
+      return this.clientsCombo;
     },
     isEditMode() {
-      return this.mode === 'edit' ? true : false
+      return this.mode === 'edit' ? true : false;
     },
     showRemoveButton() {
-      return this.$store.state.user.profile.access === 'elevated' ? true : false
+      return this.$store.state.user.profile.access === 'elevated' ? true : false;
     },
   },
   methods: {
@@ -113,15 +105,14 @@ export default {
     },
     downloadDocument(item) {
        axios.get(this.filePath(item), {responseType: 'blob'})
-        .then(( {data }) => {
-        const blob = new Blob([data], { type: 'application/pdf' })
-        let link = document.createElement('a')
-        link.href = window.URL.createObjectURL(blob)
-        link.download = item.name
-        link.click()})
-        .catch(err => console.log(err))
-      //}
-      
+      .then(( {data }) => {
+        const blob = new Blob([data], { type: 'application/pdf' });
+        let link = document.createElement('a');
+        link.href = window.URL.createObjectURL(blob);
+        link.download = item.name;
+        link.click();
+      })
+      .catch(err => console.log(err))
     },
     removeDocument(item) {
        if(confirm("Do you want to remove the document" + item.name + "?")){        
@@ -134,7 +125,7 @@ export default {
     },
     removeCandidateSent(item) {
        if(confirm("Do you want to remove " + item.candidateName + "?")){
-        this.removeInProgress = true
+        this.removeInProgress = true;
         axios.delete('api/sendToInterview/' + item.candidateSentToIntrerviewId)
         .then(() => {
           axios.get('api/jobs/' + this.jobId)
@@ -143,7 +134,7 @@ export default {
       }
     },
     close() {
-      this.$router.go(-1)
+      this.$router.go(-1);
     },
     add() {
       this.isUploading = true
@@ -158,37 +149,36 @@ export default {
         .catch(function (error) {
           console.log(error)
         })
-        .finally( () => this.$router.go(-1))
+        .finally( () => this.$router.go(-1));
       //}
       
     },
     formatDate(){
       if (this.date == null)
       {
-        return ' '
+        return ' ';
       }else{
         var res = this.date.split("-");
-        return res[2] + '.' + res[1] + '.' + res[0]
+        return res[2] + '.' + res[1] + '.' + res[0];
       }       
     },
   },
   created(){
-    this.isLoading = true 
-
+    this.isLoading = true;
     if (this.$route.query.jobId){
-      this.jobId = this.$route.query.jobId
+      this.jobId = this.$route.query.jobId;
     } 
     if (this.$route.query.title){
-      this.title = this.$route.query.title
+      this.title = this.$route.query.title;
     }
     axios.get('api/candidates')
     .then(res => {
-      this.candidates = res.data
+      this.candidates = res.data;
       var x;
       for (x in this.candidates) {          
         this.candidates[x].candidateNemail = this.candidates[x].name + " (" + this.candidates[x].email + ")";
       }
-        this.chosenCandidate = this.candidates ? this.candidates[0] : null
+        this.chosenCandidate = this.candidates ? this.candidates[0] : null;
     
     })
     .catch(() => this.isLoading = false)

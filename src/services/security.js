@@ -3,32 +3,24 @@ import store from '../vuexStore';
 Oidc.Log.logger = console;
 Oidc.Log.level = Oidc.Log.INFO;
 
- var authorityUrl = 'https://localhost:57042';
-  var someUrl = "https://localhost:8080";
-
-
-// var someUrl = 'https://crm.leap-intl.com';
-// var authorityUrl ='https://crm.leap-intl.com';
+var authorityUrl = 'https://localhost:57042';
+var someUrl = "https://localhost:8080";
 
 var mgr = new Oidc.UserManager({
-    authority: authorityUrl ,
-    client_id: 'vuejs_code_client',
-    redirect_uri: someUrl + '/#callback',
-    response_type: 'code',
-    //response_mode: 'fragment',
-    //response_type: 'id_token token',
-    scope: 'openid profile email IdentityServerApi offline_access customProfile',
-    post_logout_redirect_uri: someUrl,
-    userStore: new Oidc.WebStorageStateStore({ store: window.localStorage }),
-    checkSessionInterval: 200,
-    automaticSilentRenew: true,
-    silent_redirect_uri: someUrl + '/#silent-renew',
-    accessTokenExpiringNotificationTime: 10,
-    revokeAccessTokenOnSignout: true,
-    silentRequestTimeout: 2000
-    //   filterProtocolClaims: true,
-    //   loadUserInfo: true
-})
+  authority: authorityUrl ,
+  client_id: 'vuejs_code_client',
+  redirect_uri: someUrl + '/#callback',
+  response_type: 'code',
+  scope: 'openid profile email IdentityServerApi offline_access customProfile',
+  post_logout_redirect_uri: someUrl,
+  userStore: new Oidc.WebStorageStateStore({ store: window.localStorage }),
+  checkSessionInterval: 200,
+  automaticSilentRenew: true,
+  silent_redirect_uri: someUrl + '/#silent-renew',
+  accessTokenExpiringNotificationTime: 10,
+  revokeAccessTokenOnSignout: true,
+  silentRequestTimeout: 2000
+});
 
 
 
@@ -46,8 +38,8 @@ mgr.events.addAccessTokenExpired(function () {
   //alert('Session expired. Going out!');
   mgr.signoutRedirect().then(function (resp) {
   }).catch(function (err) {
-    console.log(err)
-  })
+    console.log(err);
+  });
 });
 
 mgr.events.addSilentRenewError(function () {
@@ -60,8 +52,8 @@ mgr.events.addUserSignedOut(function () {
   mgr.signoutRedirect()
   .then()
   .catch(function (err) {
-    console.log(err)
-  })
+    console.log(err);
+  });
 });
 
 

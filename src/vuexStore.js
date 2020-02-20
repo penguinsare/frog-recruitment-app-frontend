@@ -11,37 +11,37 @@ const store = new Vuex.Store({
       user: null,
     },
     mutations: {
-        initialiseStore(state) {
-            // Check if the ID exists
-            if(localStorage.getItem('store')) {
-                // Replace the state object with the stored item
-                this.replaceState(
-                    Object.assign(state, JSON.parse(localStorage.getItem('store')))
-                );
-            }
-        },
+      initialiseStore(state) {
+        // Check if the ID exists
+        if(localStorage.getItem('store')) {
+          // Replace the state object with the stored item
+          this.replaceState(
+            Object.assign(state, JSON.parse(localStorage.getItem('store')))
+          );
+        }
+      },
       increment (state) {
-        state.count++
+        state.count++;
       },
       authenticationSuccessful (state){
-        state.isAuthenticated = true
+        state.isAuthenticated = true;
       },
       authenticationRequired (state){
-        state.isAuthenticated = false
+        state.isAuthenticated = false;
       },
       loadUser (state, payload){
-        state.user = payload
+        state.user = payload;
       },
       unloadUser (state){
-          state.user = null;
+        state.user = null;
       }               
     },
     getters: {
       isAuthenticated: state => {
-        return state.isAuthenticated
+        return state.isAuthenticated;
       },
       user: state => {
-          return state.user
+        return state.user;
       },     
     }
   })

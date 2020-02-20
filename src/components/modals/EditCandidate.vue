@@ -1,13 +1,12 @@
 <template>
 
   <div class="midbody" v-if="isLoading" >
-    <b-spinner variant="info" label="Spinning"></b-spinner>
+    <b-spinner class="loading" label="Spinning"></b-spinner>
     <span class="loading h2"> &nbsp; Loading...     </span>
   </div>
 
   <div v-else>
-    <!-- <b-modal id="editCandidate" hide-footer title="Edit the existing 'Candidate' element"> -->
-      <div class="container">
+   <div class="container">
       <br>
        <div v-if="isEditMode">
         <h2>Edit Candidate</h2>
@@ -62,16 +61,6 @@
           <multiselect  track-by="jobId" label="title" v-model="chosenJob" :options="jobs"></multiselect>
         </b-col>
       </b-row>
-      <!-- <b-row class="my-1">
-        <b-col sm="3">
-          <label>Document saved:</label>
-        </b-col>
-        <b-col sm="9">
-          <a :href="filePath(item.item)" @click.prevent="downloadDocument(filePath(item.item))">
-           {{ this.documentName}}        
-          </a>
-        </b-col>        
-      </b-row> -->
       <b-row class="my-1">
       <b-col sm="3">
         <label>Documents saved:</label>
@@ -88,13 +77,6 @@
         </b-table>
       </b-col>
       </b-row>
-      <!-- <b-row>
-        <b-col sm="3">          
-        </b-col>
-        <b-col sm="3">
-          <b-button class="my-btn" size="sm" @click="uploadCv()">Upload CV</b-button>
-        </b-col>
-      </b-row> -->
       <br>
       <div class="text-right">
       <b-button class="my-btn" variant="success" size="lg" id="add" :disabled="!requirementsOK" @click="add">
@@ -103,7 +85,6 @@
       </b-button>
       <b-button class="my-btn" size="lg" id="close" @click="close">Close</b-button>
       </div>
-    <!-- </b-modal> -->
   </div>
 </div>
 </template>
@@ -115,7 +96,6 @@ import Multiselect from 'vue-multiselect'
 
 export default {
   name: 'editcandidate',
- /*  mode: 'production', */
   components: {
     BRow, BCol,
     BButton,
@@ -124,13 +104,13 @@ export default {
   },
   computed: {
     requirementsOK() {
-      return this.name.length > 0 ? true : false
+      return this.name.length > 0 ? true : false;
     },
     isEditMode() {
-      return this.candidateId > 0 ? true : false
+      return this.candidateId > 0 ? true : false;
     },
     showRemoveButton() {
-      return this.$store.state.user.profile.access === 'elevated' ? true : false
+      return this.$store.state.user.profile.access === 'elevated' ? true : false;
     },
   },
   methods: {
@@ -144,7 +124,7 @@ export default {
       }
     },
     close() {
-      this.$router.go(-1)
+      this.$router.go(-1);
     },
     add() {
       this.isUploading = true
@@ -182,19 +162,18 @@ export default {
       }      
     },   
     filePath(item){
-          return  'api/SavedDocuments/' + item.fileRepresentationInDatabaseId;      
+      return  'api/SavedDocuments/' + item.fileRepresentationInDatabaseId;      
     },
     downloadDocument(item) {
-       axios.get(this.filePath(item), {responseType: 'blob'})
-        .then(( {data }) => {
+      axios.get(this.filePath(item), {responseType: 'blob'})
+      .then(( {data }) => {
         const blob = new Blob([data], { type: 'application/pdf' })
         let link = document.createElement('a')
         link.href = window.URL.createObjectURL(blob)
         link.download = item.name
-        link.click()})
-        .catch(err => console.log(err))
-      //}
-      
+        link.click()
+      })
+      .catch(err => console.log(err));
     },
     uploadCv(){
       this.$router.push({
@@ -209,32 +188,31 @@ export default {
   created(){
     this.isLoading = true
     if (this.$route.query.loadInfoFromBackend){
-      this.loadInfoFromBackend = this.$route.query.loadInfoFromBackend      
+      this.loadInfoFromBackend = this.$route.query.loadInfoFromBackend;     
     }
     if (this.$route.query.candidateId){
-      this.candidateId = this.$route.query.candidateId      
+      this.candidateId = this.$route.query.candidateId;      
     }
     if (this.$route.query.name){
-      this.name = this.$route.query.name
+      this.name = this.$route.query.name;
     }   
     if (this.$route.query.email){
-      this.email = this.$route.query.email
+      this.email = this.$route.query.email;
     } 
     if (this.$route.query.phone){
-      this.phone = this.$route.query.phone
-    } 
-    
+      this.phone = this.$route.query.phone;
+    }   
     if (this.$route.query.jobId){
-      this.jobId = this.$route.query.jobId
+      this.jobId = this.$route.query.jobId;
     } 
     if (this.$route.query.documentId){
-      this.documentId = this.$route.query.documentId
+      this.documentId = this.$route.query.documentId;
     }
     if (this.$route.query.documentName){
-      this.documentName = this.$route.query.documentName
+      this.documentName = this.$route.query.documentName;
     }
     if (this.$route.query.chosenStatus){
-      this.chosenStatus = this.$route.query.chosenStatus
+      this.chosenStatus = this.$route.query.chosenStatus;
     }
   
 
@@ -249,44 +227,44 @@ export default {
         this.items = res.data.documents ? res.data.documents : []
         this.chosenStatus = res.data.candidateStatus
         axios.get('api/jobs')
+        .then(res => 
+        {
+          this.jobs = res.data
+          if (this.jobId > 0)
+          {
+            var x;
+            for (x in this.jobs)
+            {
+              if (this.jobs[x].jobId == this.jobId) {
+                this.chosenJob = this.jobs[x];
+              }
+            }
+          }            
+        })
+        .catch(err => console.log(err))
+        .finally(() => {
+          axios.get('api/candidateStatuses')
           .then(res => 
           {
-            this.jobs = res.data
-            if (this.jobId > 0)
+            this.statusOptions = res.data;
+            var x;
+            for (x in this.statusOptions)
             {
-              var x;
-              for (x in this.jobs)
-              {
-                if (this.jobs[x].jobId == this.jobId) {
-                  this.chosenJob = this.jobs[x];
-                }
+              if (this.statusOptions[x].candidateStatusId == this.chosenStatus.candidateStatusId) {
+                this.chosenStatus = this.statusOptions[x];
               }
-            }            
+            }
           })
-          .catch(err => console.log(err))
-          .finally(() => {
-            axios.get('api/candidateStatuses')
-            .then(res => 
-            {
-              this.statusOptions = res.data
-              var x;
-              for (x in this.statusOptions)
-              {
-                if (this.statusOptions[x].candidateStatusId == this.chosenStatus.candidateStatusId) {
-                  this.chosenStatus = this.statusOptions[x];
-                }
-              }
-            })
-            .finally(() => this.isLoading = false)        
+          .finally(() => this.isLoading = false);       
         })
       })
-      .catch(err => console.log(err))
+      .catch(err => console.log(err));
     }
     else{
       axios.get('api/jobs')
       .then(res => 
       {
-        this.jobs = res.data
+        this.jobs = res.data;
         if (this.jobId > 0)
         {
           var x;
@@ -303,9 +281,9 @@ export default {
         axios.get('api/candidateStatuses')
         .then(res => 
         {
-          this.statusOptions = res.data          
+          this.statusOptions = res.data;          
         })
-        .finally(() => this.isLoading = false)        
+        .finally(() => this.isLoading = false);       
       })
     }    
   },
@@ -318,15 +296,9 @@ export default {
       jobId: 0,
       candidateStatusId: 0,
       recruiterId: 0,
-      // id : '',
-      // name : '',
-      // email: '',
-      // phone: '',
       jobs: [],
       chosenStatus: null,
       statusOptions: [],
-      
-      // pathToElement : '',
       chosenJob : null,
       documentName: '',
       documentId: 0,
