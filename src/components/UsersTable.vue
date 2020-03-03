@@ -28,7 +28,7 @@
 
   <div v-else>
   <!-- Main table element -->
-    <b-table striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter">
+    <b-table bordered small responsive striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter">
       <template slot="username" scope="item">
         {{item.item.userName}}
       </template>

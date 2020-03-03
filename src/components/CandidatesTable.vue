@@ -27,7 +27,7 @@
   </div>
 
   <div v-else>
-  <b-table ref="tableRef" striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter" :key="refreshTable">
+  <b-table ref="tableRef" bordered small responsive striped hover :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter" :key="refreshTable">
     <template slot="name" scope="item">
         {{item.item.name}}
     </template>

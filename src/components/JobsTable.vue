@@ -30,7 +30,7 @@
   </div>
 
   <div v-else>
-  <b-table striped hover :sort-direction="sortDirection" :sort-compare-options="{ numeric: true, sensitivity: 'base' }" :sort-desc.sync="desc" :sort-by.sync="sortBy" :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter">
+  <b-table bordered small responsive striped hover :sort-direction="sortDirection" :sort-compare-options="{ numeric: true, sensitivity: 'base' }" :sort-desc.sync="desc" :sort-by.sync="sortBy" :items="items" :fields="fields" :current-page="currentPage" :per-page="perPage" :filter="filter">
     <template slot="title" scope="item">
       {{item.value}}
     </template>

@@ -14,7 +14,9 @@ Vue.use(BootstrapVue)
 
 
 Vue.config.productionTip = false;
-axios.defaults.baseURL = 'https://localhost:57042';
+// axios.defaults.baseURL = 'https://localhost:57042';
+axios.defaults.baseURL = 'https://localhost:5000';
+
 const globalData = {
   isAuthenticated: false,
   user: '',
