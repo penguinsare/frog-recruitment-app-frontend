@@ -44,10 +44,10 @@ import {BNavbar, BTable, BFormGroup,
         BFormSelect, BPagination,
         BContainer, BRow,
         BCol} from 'bootstrap-vue';
-import JobsTable from './components/JobsTable';
-import CandidatesTable from './components/CandidatesTable';
-import ClientsTable from './components/ClientsTable';
-import TermsOfBusiness from './components/TermsOfBusiness.vue';
+import JobsTable from './views/JobsTable';
+import CandidatesTable from './views/CandidatesTable';
+import ClientsTable from './views/ClientsTable';
+import TermsOfBusiness from './views/TermsOfBusiness.vue';
 import axios from 'axios';
 
 export default {

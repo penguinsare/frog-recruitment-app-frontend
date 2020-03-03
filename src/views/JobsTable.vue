@@ -110,7 +110,7 @@ import {BTable, BFormGroup,
         BContainer, BRow,
         BCol} from 'bootstrap-vue'; 
 import axios from 'axios';
-import EditJob from './modals/EditJob'
+import EditJob from './EditJob.vue'
 
 export default {
   name: 'app',

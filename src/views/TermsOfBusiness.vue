@@ -156,7 +156,7 @@
 </div>
 </template>
 <script>
-import { BButton, BContainer, BRow, BCol, BTableLite, BTable} from 'bootstrap-vue'; /* 'c:/Users/shide/node_modules/bootstrap-vue/es/components/table'; */
+import { BButton, BContainer, BRow, BCol, BTableLite, BTable} from 'bootstrap-vue'; 
 import axios from 'axios';
 import * as jsPDF from 'jspdf';
 import 'jspdf-autotable';

@@ -66,8 +66,8 @@ import {BTable, BFormGroup,
         BContainer, BRow,
         BCol} from 'bootstrap-vue'; 
 import axios from 'axios';
-import AddUser from './modals/AddUser'
-import ChangeUserPassword from './modals/ChangeUserPassword'
+import AddUser from './AddUser.vue'
+import ChangeUserPassword from './ChangeUserPassword.vue'
 
 export default {
   name: 'app',

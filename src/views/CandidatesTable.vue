@@ -81,10 +81,10 @@ import {BTable, BFormGroup,
         BFormInput, BButton,
         BFormSelect, BPagination,
         BContainer, BRow,
-        BCol} from 'bootstrap-vue'; /* 'c:/Users/shide/node_modules/bootstrap-vue/es/components/table'; */
+        BCol} from 'bootstrap-vue'; 
 import axios from 'axios';
-import EditCandidate from './modals/EditCandidate'
-import AddCv from './modals/AddCv'
+import EditCandidate from './EditCandidate.vue'
+import AddCv from './AddCv.vue'
 export default {
   name: 'app',
   components: {

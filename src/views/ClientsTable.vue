@@ -86,7 +86,7 @@ import {BTable, BFormGroup,
         BContainer, BRow,
         BCol} from 'bootstrap-vue'; 
 import axios from 'axios';
-import EditClient from './modals/EditClient'
+import EditClient from './EditClient.vue'
 
 export default {
   name: 'app',
